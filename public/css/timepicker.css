@@ -1,0 +1,8 @@
+.timepicker.tp-container {
+    select {
+        width: 70px;
+    }
+    input.tp-selected-time {
+        width: 100px;
+    }
+}
