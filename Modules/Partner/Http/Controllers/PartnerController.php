@@ -181,6 +181,8 @@ class PartnerController extends Controller
 
         $print_partner_id = request()->get('print_partner_id');
 
+        $partner_debt = $this->ptUtil->getDebt($business_id);
+
         return view('partner::partner.index', compact(
             'partner_categories',
             'localities',
@@ -360,12 +362,13 @@ class PartnerController extends Controller
     {
         try {
             $partner = Partner::with('leave')->find($id);
-            $partner['date_admission'] = $this->partnerUtil->format_date($partner['date_admission']);
-            $partner['application_submission_date'] = $this->partnerUtil->format_date($partner['application_submission_date']);
-            $partner['date_expire_book'] = $this->partnerUtil->format_date($partner['date_expire_book']);
-            $partner['dob'] = $this->partnerUtil->format_date($partner['dob']);
-            $partner['entered_at'] = $this->partnerUtil->format_date($partner['entered_at']);
-            $partner['accepted_at'] = $this->partnerUtil->format_date($partner['accepted_at']);
+            $partner->date_admission = $this->partnerUtil->format_date($partner['date_admission']);
+            $partner->application_submission_date = $this->partnerUtil->format_date($partner['application_submission_date']);
+            $partner->date_expire_book = $this->partnerUtil->format_date($partner['date_expire_book']);
+            $partner->dob = $this->partnerUtil->format_date($partner['dob']);
+            $partner->entered_at = $this->partnerUtil->format_date($partner['entered_at']);
+            $partner->accepted_at = $this->partnerUtil->format_date($partner['accepted_at']);
+            $partner->debt = $this->ptUtil->getDebt($id);
 
             return view('partner::partner.show', compact('partner'));
         } catch (\Exception $e) {
@@ -517,6 +520,8 @@ class PartnerController extends Controller
             $leave_reasons = PartnerLeaveReason::allLeaveReasons($business_id);
 
             $last_payment = $this->ptUtil->getLastPayment($id);
+
+            $partner->debt = $this->ptUtil->getDebt($id);
 
             return view('partner::partner.leave', compact('partner', 'leave_types', 'leave_reasons', 'last_payment'));
         } catch (\Exception $e) {
@@ -728,6 +733,7 @@ class PartnerController extends Controller
             $partner->entered_at = $this->partnerUtil->format_date($partner->entered_at);
             $partner->accepted_at = $this->partnerUtil->format_date($partner->accepted_at);
             $partner->newly_registered = $partner->created_at == $partner->updated_at ? true : false;
+            $partner->debt = $this->ptUtil->getDebt($id);
 
             $receipt = [
                 'is_enabled' => false,

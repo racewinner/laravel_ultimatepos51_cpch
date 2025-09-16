@@ -118,24 +118,36 @@
                 <div class="col-sm-3 invoice-col">
                     <div class="form-group">
                         {!! Form::label('first_month_charge', __('partner::lang.first_month_charge') . ':') !!}
-                        <div class="partner-profile">{{$partner?->first_month_charge}}</div>
+                        <div style="display: flex">
+                          <div class="partner-profile" style="flex-grow: 1">{{$partner?->debt['first_month']}}</div>
+                          <div class="partner-profile" style="flex-grow: 1">
+                              {{ \App\Utils\Util::format_currency($partner?->debt['monthly_fee'], $partner?->debt['currency']) }}
+                          </div>
+                        </div>
                     </div>
                 </div>
                 <div class="col-sm-3 invoice-col">
                     <div class="form-group">
                         {!! Form::label('last_month_charge', __('partner::lang.last_month_charge') . ':') !!}
-                        <div class="partner-profile">{{$partner?->last_month_charge}}</div>
+                        <div style="display: flex">
+                          <div class="partner-profile" style="flex-grow: 1">{{$partner?->debt['last_month']}}</div>
+                          <div class="partner-profile" style="flex-grow: 1">
+                              {{ \App\Utils\Util::format_currency($partner?->debt['months'] * $partner?->debt['monthly_fee'], $partner?->debt['currency']) }}
+                          </div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-sm-3 invoice-col">
+                <!-- <div class="col-sm-3 invoice-col">
                     <div class="form-group">
                         {!! Form::label('debt_amount', __('partner::lang.debt_amount') . ':') !!}
-                        <div class="partner-profile">{{$partner?->debt_amount}}</div>
+                        <div class="partner-profile">
+                            {{ \App\Utils\Util::format_currency($partner?->debt['months'] * $partner?->debt['monthly_fee'], $partner?->debt['currency']) }}
+                        </div>
                     </div>
                 </div>
                 <div class="col-sm-3 invoice-col">
                     <div class="form-group">
-                        {!! Form::label('first_month_paid_on_debt', __('partner::lang.first_month_charge') . ':') !!}
+                        {!! Form::label('first_month_paid_on_debt', __(key: 'partner::lang.first_month_charge') . ':') !!}
                         <div class="partner-profile">{{$partner?->first_month_charge}}</div>
                     </div>
                 </div>
@@ -151,7 +163,7 @@
                         {!! Form::label('remain_debt', __('partner::lang.remain_debt') . ':') !!}
                         <div class="partner-profile">{{$partner?->remain_debt}}</div>
                     </div>
-                </div>
+                </div> -->
             </div>
             @endcomponent
 

@@ -89,13 +89,22 @@ class PartnerTransactionUtil extends \App\Utils\Util
     public function getLastPayment($partner_id, $additional_payment=0)
     {
         try {
-            $query = PartnerReceipt::where('partner_id', $partner_id)->where('paid', 1);
+            $query = PartnerReceipt::where('partner_id', $partner_id)
+              ->where(function($query) {
+                $query->whereNull('deleted')->orWhere('deleted', '<>', 1);
+              })
+              ->where('paid', 1);
             if($additional_payment == 1) $query->where('additional_payment', 1);
             $last_pay_month = $query->max('to_month');
             if (empty($last_pay_month))
                 return null;
 
-            $payment = PartnerReceipt::where('partner_id', $partner_id)->where('to_month', $last_pay_month)->first();
+            $payment = PartnerReceipt::where('partner_id', $partner_id)
+              ->where('to_month', $last_pay_month)
+              ->where(function($query) {
+                $query->whereNull('deleted')->orWhere('deleted', '<>', 1);
+              })
+              ->first();
 
             return [
                 'month' => Carbon::parse($last_pay_month)->format('m/Y'),
@@ -133,11 +142,17 @@ class PartnerTransactionUtil extends \App\Utils\Util
         try {
             $last_pay_month = PartnerReceipt::where('partner_id', $partner_id)
                 ->where('paid', 1)
+                ->where(function($query) {
+                  $query->whereNull('deleted')->orWhere('deleted', '<>', 1);
+                })
                 ->max('to_month');
 
             if (empty($last_pay_month)) {
                 $first_charge_month = PartnerReceipt::where('partner_id', $partner_id)
                     ->where('paid', 0)
+                    ->where(function($query) {
+                      $query->whereNull('deleted')->orWhere('deleted', '<>', 1);
+                    })
                     ->min('from_month');
 
                 if (empty($first_charge_month))
@@ -146,6 +161,13 @@ class PartnerTransactionUtil extends \App\Utils\Util
                 $first_charge_month = Carbon::parse($first_charge_month);
             } else {
                 $first_charge_month = Carbon::parse($last_pay_month)->addMonth();
+                $last_charge_ym_str = substr($last_pay_month, 0, 7);
+
+                $now = new \DateTime(date('Y-m'));
+                $currentYearMonth = $now->format('Y-m'); // e.g., "2025-09"
+
+                if ($last_charge_ym_str == $currentYearMonth)
+                    return null;
             }
 
             $today = new \DateTime(date('Y-m-d'));
