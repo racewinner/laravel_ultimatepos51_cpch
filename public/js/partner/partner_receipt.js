@@ -39,6 +39,7 @@ $(document).ready(() => {
         $issue_months = $(e.target).find("#issue_months");
         const start_month = $issue_months.data('start-month');
         const end_month = $issue_months.data('end-month');
+
         initMonthPicker($issue_months, {
             startMonth: start_month,
             endMonth: end_month,

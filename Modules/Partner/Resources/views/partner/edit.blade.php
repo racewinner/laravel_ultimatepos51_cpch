@@ -623,6 +623,7 @@ if ($action == 'create') {
                 },
                 dangerMode: false,
             }).then((willPay) => {
+              // debugger
                 if(!willPay) {
                     $.ajax({
                         method: 'POST',
@@ -639,7 +640,12 @@ if ($action == 'create') {
                                     "{{ __('partner::messages.receipt_issued_success') }}", 
                                     'success',
                                     function() {
-                                        printReceipts(result.new_receipt_ref_nos, 0)
+                                        /**
+                                         * this line is inactivated by viktor.cancel
+                                         * on Sep. 15th 2025
+                                         * because of problem 28 
+                                         */
+                                        // printReceipts(result.new_receipt_ref_nos, 0)
 
                                         setTimeout(() => {
                                             window.location.href = `/partner/partners?print_partner_id=${partner_id}`;
