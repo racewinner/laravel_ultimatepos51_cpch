@@ -14,6 +14,7 @@
             @endcomponent
 
             @component('components.widget', ['class' => 'box-primary', 'header' => '<h4>' . __('partner::lang.unpaid_receipts') . '</h4>'])
+
             <table class="table table-bordered table-striped unpaid-receipts">
                 <thead>
                     <tr>

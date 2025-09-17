@@ -58,6 +58,47 @@
                 </div>
             </div>
 
+            @component('components.widget', ['class' => 'box-primary', 'header' => '<h4>' . __('partner::lang.unpaid_receipts') . '</h4>'])
+            <table class="table table-bordered table-striped unpaid-receipts">
+                <thead>
+                    <tr>
+                        <th>@lang('lang_v1.months')</th>
+                        <th>@lang('purchase.ref_no')</th>
+                        <th>@lang('business.currency')</th>
+                        <th>@lang('sale.amount')</th>
+                        <th>@lang('lang_v1.issuer')</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if($unpaid_receipts->count() > 0)
+                        @foreach ($unpaid_receipts as $receipt)
+                            <tr data-receipt-id="{{ $receipt->id }}">
+                                <td class="d-flex align-items-center">
+                                    <!-- <input type="checkbox" class="sel_unpaid_receipt m-0" data-receipt-id="{{ $receipt->id }}" /> -->
+                                    <span class="ms-2">{{ $receipt->period }}</span>
+                                </td>
+                                <td>{{ $receipt->ref_no }}</td>
+                                <td>{{ $receipt->currency?->symbol ?? '' }}</td>
+                                <td>{{ $receipt->amount }}</td>
+                                <td>{{ $receipt->editor->display_name }}</td>
+                            </tr>
+                        @endforeach
+                    @else
+                        <tr>
+                            <td colspan="5" class="text-center">@lang('partner::messages.no_unpaid_receipts')</td>
+                        </tr>
+                    @endif
+                </tbody>
+            </table>
+
+            <!-- @if($unpaid_receipts->count() > 0)
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="button" class="btn btn-success"
+                        id="btn_settle_unpaidReceipts">@lang("lang_v1.pay")</button>
+                </div>
+            @endif -->
+            @endcomponent
+            
             @component('components.widget', ['class' => 'box-primary', 'header' => '<h4>' . __('invoice.receipt') . '</h4>'])
             @if(!empty($issue_months))
                 <div class="row">

@@ -888,8 +888,35 @@ class PartnerController extends Controller
                 }
             }
 
+            //additional part for problem 31
+            // To get receipts already issued but not paid.
+            $unpaid_receipts = PartnerReceipt::where('partner_id', $id)
+                ->where(function ($query) {
+                    $query->whereNull('deleted')->orWhere('deleted', '<>', 1);
+                })
+                ->where('paid', '!=', 1)->with(['editor', 'partner', 'currency'])->get();
+
+            // To get receipts not-issued until when the partner was cancelled.
+            $last_receipt = $this->ptUtil->getLastReceipt($id);
+            if (!empty($last_receipt)) {
+                $unissued_start_month = Carbon::createFromFormat('m/Y', $last_receipt['month'])->addMonth();
+                $today = Carbon::now();
+
+                if ($unissued_start_month < $today) {
+                    $unissued_receipts = [
+                        'start_month' => "$unissued_start_month->month/$unissued_start_month->year",
+                        'end_month' => "$today->month/$today->year"
+                    ];
+                } else {
+                    $unissued_receipts = [
+                        'start_month' => "$unissued_start_month->month/$unissued_start_month->year",
+                        'end_month' => "$unissued_start_month->month/$unissued_start_month->year",
+                    ];
+                }
+            }
+
             return view("partner::partner.partials.issue_receipt_modal", 
-                compact('partner', 'last_payment', 'issue_months'));
+                compact('partner', 'last_payment', 'issue_months', 'unpaid_receipts', 'unissued_receipts'));
         } catch (\Exception $e) {
             \Log::emergency('File:' . $e->getFile() . 'Line:' . $e->getLine() . 'Message:' . $e->getMessage());
             $output = [

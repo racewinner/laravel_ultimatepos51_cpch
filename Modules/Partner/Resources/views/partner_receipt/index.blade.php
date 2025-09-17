@@ -340,7 +340,7 @@
 
             $(document).on('click', '.receipt-settle', function (e) {
                 e.preventDefault();
-
+               
                 const receipt_id = $(e.target).closest('a').data('id');
 
                 // To check whether there is prev-month when was not made payment
@@ -349,6 +349,7 @@
                     method: 'get',
                     dataType: 'json',
                     success: function (result) {
+                      debugger
                         if(result.success == 0) {
                             toastrSwal(result.msg, 'warning');
                         } else {
