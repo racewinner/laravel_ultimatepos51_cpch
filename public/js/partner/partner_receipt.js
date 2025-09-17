@@ -112,8 +112,8 @@ $(document).ready(() => {
             const to_month_date = new Date(y, m, 1);
             const today = new Date();
             if(today < to_month_date) {
-                // toastrSwal("Receipt could not made for the future month", 'warning');
-                toastrSwal(LANG.receipt_issued_future_month, 'warning');
+            //  toastrSwal("Receipt could not made for the future month", 'warning');
+                toastrSwal("No se pudo realizar el recibo para el mes futuro", 'warning');
                 $form.find("button[type='submit']").prop('disabled', false);
                 return;
             }

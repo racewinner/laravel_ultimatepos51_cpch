@@ -18,7 +18,6 @@
 
 <section style="padding: 10px;">
     <div style='text-align:right; font-size: 90%;'>@lang('partner::lang.payment_information')</div>
-    <div>XXXXXXXXXXXX</div>
     <div style="display:flex; flex-direction:column;align-items:center; text-align:center; margin-top:10px;">
         <div style='font-size: 110%;'>{{ $business_details->name }}</div>
     </div>

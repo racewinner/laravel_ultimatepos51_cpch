@@ -133,5 +133,4 @@ LANG = {
     'not_connected_to_a_network': "You're not connected to a Network",
     'skus_already_exists': 'sku :sku already exists',
     'copied_to_clipboard': 'Copied to clipboard',
-    'receipt_issued_future_month': 'Receipt could not made for the future month'
 };

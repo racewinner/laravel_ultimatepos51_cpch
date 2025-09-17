@@ -534,6 +534,16 @@ function getSelectedRows() {
     return selected_rows;
 }
 
+function getUnSelectedRows() {
+  var selected_rows = [];
+  var i = 0;
+  $('.row-select:unchecked').each(function () {
+      selected_rows[i++] = $(this).val();
+  });
+
+  return selected_rows;
+}
+
 function __is_online() {
     return true;
 

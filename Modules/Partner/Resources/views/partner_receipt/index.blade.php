@@ -406,10 +406,82 @@
                 }
             })
 
-            $(document).on('click', '#btn_bulk_settle', function (e) {
+            async function check_pre_unpaied (selected_ids, unselected_ids) {
+                let selected_objs = selected_ids.map(itm => ({id: itm, to_del: 0}))
+
+                for (var i = 0; i < selected_ids.length; i++) {
+                  let selected_id = selected_ids[i];
+                  let prev_selected_id = parseInt(selected_id) - 1;
+                  let selected_idx = selected_ids.indexOf(prev_selected_id.toString());
+                  if (selected_idx != -1) 
+                      selected_objs[i].to_del = 1
+                }
+
+                selected_objs = selected_objs.filter(itm => itm.to_del == 0);
+                selected_ids = selected_objs.map(itm => itm.id);
+
+                let pre_unpaied_detect = false;
+                let result_msg = '';
+
+                for (var j = 0; j < selected_ids.length; j++) {
+                    await $.ajax({
+                        url: `/partner/receipts/${selected_ids[j]}/prev_unpaid`,
+                        method: 'get',
+                        dataType: 'json',
+                        success: function (result) {
+                            if(result.success == 0) {
+                                pre_unpaied_detect = true;
+                                pre_unpaied_id = selected_ids[j];
+                                result_msg = result.msg;
+                            } 
+                        }
+                    })
+
+                    if (pre_unpaied_detect)
+                        break;
+                }
+                
+                return {pre_unpaied_detect, pre_unpaied_id, result_msg}
+            }
+
+            $(document).on('click', '#btn_bulk_settle', async function (e) {
                 e.preventDefault();
 
                 let selected_ids = getSelectedRows();
+                let unselected_ids = getUnSelectedRows();
+
+                //check the pre-unpaied
+                const { pre_unpaied_detect, pre_unpaied_id, result_msg } = await check_pre_unpaied(selected_ids, unselected_ids);
+                let pre_unpaied_id4iterator = parseInt(pre_unpaied_id);
+                let cnt_iterator = 0;
+
+                let seg_unselected_idx = unselected_ids.indexOf((pre_unpaied_id - 1).toString());
+                let seg_unselected_ids = unselected_ids.filter((itm, idx) => idx <= seg_unselected_idx)
+                debugger
+                while (1) {
+                  pre_unpaied_id4iterator--;
+                  cnt_iterator++;
+                  if (seg_unselected_ids.includes((pre_unpaied_id4iterator - 1).toString()) == false) 
+                      break;
+                }
+
+                debugger
+                let jq_el_before_unpaied = $("input[value='"+pre_unpaied_id+"']").parent().parent()
+                for(let i = 0; i < cnt_iterator; i++) {
+                  jq_el_before_unpaied = jq_el_before_unpaied.prev();
+                }
+                let msg = jq_el_before_unpaied ? jq_el_before_unpaied.children().get(2).children[0].innerHTML : undefined;
+
+                if (pre_unpaied_detect) {
+                    if (!msg)
+                      toastrSwal(result_msg, 'warning');
+                    else {
+                      let new_msg = result_msg.slice(0, -7);
+                      new_msg += msg;
+                      toastrSwal(new_msg, 'warning');
+                    }
+                    return;
+                }
 
                 if (selected_ids.length > 0) {
                     swal({

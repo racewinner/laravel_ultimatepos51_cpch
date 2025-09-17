@@ -111,5 +111,4 @@ LANG = {
 "last_year": "El año pasado", 
 "last_financial_year": "Último ejercicio financiero", 
 "this_month_last_year": "Este mes el año pasado",  
-'receipt_issued_future_month': 'No se pudo realizar el recibo para el mes futuro'
 };
