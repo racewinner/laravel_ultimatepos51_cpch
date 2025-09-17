@@ -422,6 +422,7 @@
                 selected_ids = selected_objs.map(itm => itm.id);
 
                 let pre_unpaied_detect = false;
+                let pre_unpaied_id = -1;
                 let result_msg = '';
 
                 for (var j = 0; j < selected_ids.length; j++) {
@@ -453,27 +454,33 @@
 
                 //check the pre-unpaied
                 const { pre_unpaied_detect, pre_unpaied_id, result_msg } = await check_pre_unpaied(selected_ids, unselected_ids);
-                let pre_unpaied_id4iterator = parseInt(pre_unpaied_id);
-                let cnt_iterator = 0;
-
-                let seg_unselected_idx = unselected_ids.indexOf((pre_unpaied_id - 1).toString());
-                let seg_unselected_ids = unselected_ids.filter((itm, idx) => idx <= seg_unselected_idx)
-                debugger
-                while (1) {
-                  pre_unpaied_id4iterator--;
-                  cnt_iterator++;
-                  if (seg_unselected_ids.includes((pre_unpaied_id4iterator - 1).toString()) == false) 
-                      break;
-                }
-
-                debugger
-                let jq_el_before_unpaied = $("input[value='"+pre_unpaied_id+"']").parent().parent()
-                for(let i = 0; i < cnt_iterator; i++) {
-                  jq_el_before_unpaied = jq_el_before_unpaied.prev();
-                }
-                let msg = jq_el_before_unpaied ? jq_el_before_unpaied.children().get(2).children[0].innerHTML : undefined;
 
                 if (pre_unpaied_detect) {
+                    let pre_unpaied_id4iterator = parseInt(pre_unpaied_id);
+                    let cnt_iterator = 0;
+
+                    let seg_unselected_idx = unselected_ids.indexOf((pre_unpaied_id - 1).toString());
+                    let seg_unselected_ids = unselected_ids.filter((itm, idx) => idx <= seg_unselected_idx)
+
+                    debugger
+                    while (1) {
+                      pre_unpaied_id4iterator--;
+                      cnt_iterator++;
+                      if (seg_unselected_ids.includes((pre_unpaied_id4iterator - 1).toString()) == false) 
+                          break;
+                    }
+
+                    debugger
+                    let jq_el_before_unpaied = $("input[value='"+pre_unpaied_id+"']").parent().parent()
+                    for(let i = 0; i < cnt_iterator; i++) {
+                      jq_el_before_unpaied = jq_el_before_unpaied.prev();
+                    }
+                    let msg = jq_el_before_unpaied ? jq_el_before_unpaied.children().get(2).children[0].innerHTML : undefined;
+
+
+
+
+                  
                     if (!msg)
                       toastrSwal(result_msg, 'warning');
                     else {

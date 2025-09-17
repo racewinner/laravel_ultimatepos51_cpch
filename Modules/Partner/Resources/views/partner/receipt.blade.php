@@ -38,7 +38,7 @@
     <div style="flex:1; border-radius: 5px; display:flex; padding: 15px 10px;" class="background-grey">
         <div style="width: 200px;">
             <div style="text-align:center;">
-                <img src="/images/partner/mark2.png" style="width: 100px; height: 100px;" />
+                <img src="/images/partner/mark5.png" style="width: 100px; height: 100px;" />
             </div>
             <div style="text-align:center; margin-top: 30px;">PRESIDENTE</div>
             <div style="margin-top: 30px; display:flex; justify-content:space-between;">

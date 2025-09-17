@@ -598,7 +598,7 @@ class PartnerReceiptController extends Controller
             ];
 
             // logo image
-            $imageUrl = public_path('/images/partner/mark2.png');
+            $imageUrl = public_path('/images/partner/mark5.png');
             $imageData = file_get_contents($imageUrl);
             $base64 = base64_encode($imageData);
             $base64Logo = 'data:image/jpeg;base64,' . $base64;
@@ -647,7 +647,7 @@ class PartnerReceiptController extends Controller
             $receipt_groups = $receipts->groupBy($type == 'receipt' ? 'ref_no' : 'payment_ref_no');
 
             // logo image
-            $imageUrl = public_path('/images/partner/mark2.png');
+            $imageUrl = public_path('/images/partner/mark5.png');
             $imageData = file_get_contents($imageUrl);
             $base64 = base64_encode($imageData);
             $base64Logo = 'data:image/jpeg;base64,' . $base64;
@@ -683,7 +683,7 @@ class PartnerReceiptController extends Controller
             $receipts = [$receipt];
 
             // logo image
-            $imageUrl = public_path('/images/partner/mark2.png');
+            $imageUrl = public_path('/images/partner/mark5.png');
             $imageData = file_get_contents($imageUrl);
             $base64 = base64_encode($imageData);
             $base64Logo = 'data:image/jpeg;base64,' . $base64;
