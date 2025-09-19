@@ -7,6 +7,17 @@
         <h1>@lang('invoice.receipt')</h1>
     </section>
 
+    <section>
+      <div class="container mt-3">
+          <input type='hidden' id='receipt_id' />
+
+          <!-- Button to Open the Modal -->
+          <button type="button" class="btn btn-primary ms-2 px-4 py-0 mb-1 btn-pin-verify" data-toggle='modal' 
+                                id="trigger_checkPinModal" data-target='#checkPinModal' style="font-size: 80%;">Verify PIN</button>
+          @include('partner::partner.partials.confirm_pin_modal')
+      </div>
+    </section>
+
     <!-- Main content -->
     <section class="content no-print">
         @component('components.filters', ['title' => __('report.filters')])
@@ -338,10 +349,59 @@
                 receipt_table.ajax.reload();
             })
 
+            $(document).on('click', '#btn_check_pin', function(e) {
+              const pin_partner = $("#checkPinModal input[name='pin_partner']").val();
+              if (!pin_partner) return;
+
+              let receipt_id = $("#receipt_id").val();
+
+              $.ajax({
+                  method: 'POST',
+                  url: '/users/check_pin_partner',
+                  dataType: 'json',
+                  data: { pin_partner },
+                  error: function (jqXHR, textStatus, errorThrown) {
+                      console.log(errorThrown);
+                  },
+                  success: function (result) {
+                      if (result.success == 1) {
+                        $("#checkPinModal").modal("hide");
+                        
+                        const url = `/partner/receipts/${receipt_id}/settle`;
+                        $.ajax({
+                            url,
+                            method: 'get',
+                            dataType: 'json',
+                            success: function (result) {
+                                if (result.success == 1) {
+                                    if(!receipt_table) initReceiptTable();
+                                    receipt_table.ajax.reload();
+
+                                    toastrSwal(result.msg, 'success', function() {
+                                        showUnsettledReceipts(result.partner_id);
+
+                                        setTimeout(() => {
+                                            window.open(`/partner/receipts/${receipt_id}/print?type=payment`, "_blank");
+                                        }, 1000);
+    
+                                    });
+                                } else {
+                                    toastrSwal(result.msg, 'error');
+                                }
+                            }
+                        })
+                      } else {
+                          toastrSwal(result.msg, 'error');
+                      }
+                  }
+              });
+            })
+
             $(document).on('click', '.receipt-settle', function (e) {
                 e.preventDefault();
                
                 const receipt_id = $(e.target).closest('a').data('id');
+                $("#receipt_id").val(receipt_id)
 
                 // To check whether there is prev-month when was not made payment
                 $.ajax({
@@ -349,9 +409,11 @@
                     method: 'get',
                     dataType: 'json',
                     success: function (result) {
-                      debugger
                         if(result.success == 0) {
-                            toastrSwal(result.msg, 'warning');
+                            toastrSwal(result.msg, 'warning', function() {
+                                $("#checkPinModal input[name='pin_partner']").val("")
+                                $("#trigger_checkPinModal").click();
+                            })
                         } else {
                             swal({
                                 text: "@lang('partner::messages.confirm_settle_receipt')",
@@ -462,7 +524,6 @@
                     let seg_unselected_idx = unselected_ids.indexOf((pre_unpaied_id - 1).toString());
                     let seg_unselected_ids = unselected_ids.filter((itm, idx) => idx <= seg_unselected_idx)
 
-                    debugger
                     while (1) {
                       pre_unpaied_id4iterator--;
                       cnt_iterator++;
@@ -470,7 +531,6 @@
                           break;
                     }
 
-                    debugger
                     let jq_el_before_unpaied = $("input[value='"+pre_unpaied_id+"']").parent().parent()
                     for(let i = 0; i < cnt_iterator; i++) {
                       jq_el_before_unpaied = jq_el_before_unpaied.prev();
