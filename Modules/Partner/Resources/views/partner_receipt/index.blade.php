@@ -7,16 +7,18 @@
         <h1>@lang('invoice.receipt')</h1>
     </section>
 
-    <section>
-      <div class="container mt-3">
-          <input type='hidden' id='receipt_id' />
+    @if(auth()->user()->enable_pin_partner)
+        <section>
+          <div class="container mt-3">
+              <input type='hidden' id='receipt_id' />
 
-          <!-- Button to Open the Modal -->
-          <button type="button" class="btn btn-primary ms-2 px-4 py-0 mb-1 btn-pin-verify" data-toggle='modal' 
-                                id="trigger_checkPinModal" data-target='#checkPinModal' style="font-size: 80%;">Verify PIN</button>
-          @include('partner::partner.partials.confirm_pin_modal')
-      </div>
-    </section>
+              <!-- Button to Open the PIN Checking Modal -->
+              <button type="button" class="btn btn-primary ms-2 px-4 py-0 mb-1 btn-pin-verify hide" data-toggle='modal' 
+                                    id="trigger_checkPinModal" data-target='#checkPinModal' style="font-size: 80%;">Verify PIN</button>
+              @include('partner::partner.partials.confirm_pin_modal')
+          </div>
+        </section>
+    @endif
 
     <!-- Main content -->
     <section class="content no-print">
@@ -411,8 +413,10 @@
                     success: function (result) {
                         if(result.success == 0) {
                             toastrSwal(result.msg, 'warning', function() {
-                                $("#checkPinModal input[name='pin_partner']").val("")
-                                $("#trigger_checkPinModal").click();
+                                if ($("#trigger_checkPinModal")) {
+                                    $("#checkPinModal input[name='pin_partner']").val("")
+                                    $("#trigger_checkPinModal").click();
+                                }
                             })
                         } else {
                             swal({

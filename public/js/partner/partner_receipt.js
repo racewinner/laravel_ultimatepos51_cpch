@@ -103,22 +103,47 @@ $(document).ready(() => {
         var url = $form.attr('action');
 
         // To check whether receipt would be made for the future.
-        if(paid == 0) {
-            const months = issue_months.split('-');
-            const to_month_str = months[1].trim();
-            const parts = to_month_str.split('/');
-            const m = parseInt(parts[0], 10) - 1;
-            const y = parseInt(parts[1], 10);
-            const to_month_date = new Date(y, m, 1);
-            const today = new Date();
-            if(today < to_month_date) {
-            //  toastrSwal("Receipt could not made for the future month", 'warning');
-                toastrSwal("No se pudo realizar el recibo para el mes futuro", 'warning');
+        // if(paid == 0) {
+          const months = issue_months.split('-');
+          const to_month_str = months[1].trim();
+          const parts = to_month_str.split('/');
+          const m = parseInt(parts[0], 10) - 1;
+          const y = parseInt(parts[1], 10);
+          const to_month_date = new Date(y, m, 1);
+          const today = new Date();
+          if(today < to_month_date) {
+          //  toastrSwal("Receipt could not made for the future month", 'warning');
+              toastrSwal("No se pudo realizar el recibo para el mes futuro", 'warning');
+              $form.find("button[type='submit']").prop('disabled', false);
+              return;
+          }
+        //}
+      
+        // To check where filters are all filled
+        var fv_partner_category_from = $('select[name="partner_category_from"]').val();
+        var fv_partner_category_to = $('select[name="partner_category_to"]').val();
+        var fv_from_radio_id = $('select[name="from_radio_id"]').val();
+        var fv_to_radio_id = $('select[name="to_radio_id"]').val();
+        var fv_from_zone_id = $('select[name="from_zone_id"]').val();
+        var fv_to_zone_id = $('select[name="to_zone_id"]').val();
+        var fv_from_route_id = $('input[name="from_route_id"]').val();
+        var fv_to_route_id = $('input[name="to_route_id"]').val();
+
+        if(!fv_partner_category_from || !fv_partner_category_to ||
+           !fv_from_radio_id         || !fv_to_radio_id         ||
+           !fv_from_zone_id          || !fv_to_zone_id          || 
+           !fv_from_route_id         || !fv_to_route_id ) {
+
+            toastrSwal("debe elegir todos los filtros", 'error', function(e) {
                 $form.find("button[type='submit']").prop('disabled', false);
-                return;
-            }
+            });
+            
+            return false;
         }
 
+        // This part doesn't seem to be finished yet. 
+        // victor.c
+        // 2025/09/19
         $.ajax({
             method: 'POST',
             url,
