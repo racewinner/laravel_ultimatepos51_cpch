@@ -119,26 +119,29 @@ $(document).ready(() => {
           }
         //}
       
-        // To check where filters are all filled
-        var fv_partner_category_from = $('select[name="partner_category_from"]').val();
-        var fv_partner_category_to = $('select[name="partner_category_to"]').val();
-        var fv_from_radio_id = $('select[name="from_radio_id"]').val();
-        var fv_to_radio_id = $('select[name="to_radio_id"]').val();
-        var fv_from_zone_id = $('select[name="from_zone_id"]').val();
-        var fv_to_zone_id = $('select[name="to_zone_id"]').val();
-        var fv_from_route_id = $('input[name="from_route_id"]').val();
-        var fv_to_route_id = $('input[name="to_route_id"]').val();
+        let action = $("input[name='action']").val();
+        if (action === 'edit') {
+            // To check where filters are all filled
+            var fv_partner_category_from = $('select[name="partner_category_from"]').val();
+            var fv_partner_category_to = $('select[name="partner_category_to"]').val();
+            var fv_from_radio_id = $('select[name="from_radio_id"]').val();
+            var fv_to_radio_id = $('select[name="to_radio_id"]').val();
+            var fv_from_zone_id = $('select[name="from_zone_id"]').val();
+            var fv_to_zone_id = $('select[name="to_zone_id"]').val();
+            var fv_from_route_id = $('input[name="from_route_id"]').val();
+            var fv_to_route_id = $('input[name="to_route_id"]').val();
 
-        if(!fv_partner_category_from || !fv_partner_category_to ||
-           !fv_from_radio_id         || !fv_to_radio_id         ||
-           !fv_from_zone_id          || !fv_to_zone_id          || 
-           !fv_from_route_id         || !fv_to_route_id ) {
+            if(!fv_partner_category_from || !fv_partner_category_to ||
+              !fv_from_radio_id         || !fv_to_radio_id         ||
+              !fv_from_zone_id          || !fv_to_zone_id          || 
+              !fv_from_route_id         || !fv_to_route_id ) {
 
-            toastrSwal("debe elegir todos los filtros", 'error', function(e) {
-                $form.find("button[type='submit']").prop('disabled', false);
-            });
-            
-            return false;
+                toastrSwal("debe elegir todos los filtros", 'error', function(e) {
+                    $form.find("button[type='submit']").prop('disabled', false);
+                });
+                
+                return false;
+            }
         }
 
         // This part doesn't seem to be finished yet. 

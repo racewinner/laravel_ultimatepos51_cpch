@@ -121,7 +121,7 @@
                         <div style="display: flex">
                           <div class="partner-profile" style="flex-grow: 1">{{$partner?->debt['first_month']}}</div>
                           <div class="partner-profile" style="flex-grow: 1">
-                              {{ \App\Utils\Util::format_currency($partner?->debt['monthly_fee'], $partner?->debt['currency']) }}
+                              {{ \App\Utils\Util::format_currency($partner && $partner->debt['first_month'] ? $partner->debt['monthly_fee'] : null, $partner?->debt['currency']) }}
                           </div>
                         </div>
                     </div>
@@ -132,7 +132,7 @@
                         <div style="display: flex">
                           <div class="partner-profile" style="flex-grow: 1">{{$partner?->debt['last_month']}}</div>
                           <div class="partner-profile" style="flex-grow: 1">
-                              {{ \App\Utils\Util::format_currency($partner?->debt['months'] * $partner?->debt['monthly_fee'], $partner?->debt['currency']) }}
+                              {{ \App\Utils\Util::format_currency($partner?->debt['monthly_fee'], $partner?->debt['currency']) }}
                           </div>
                         </div>
                     </div>
