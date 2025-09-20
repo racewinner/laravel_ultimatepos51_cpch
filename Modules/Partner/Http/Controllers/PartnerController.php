@@ -855,6 +855,8 @@ class PartnerController extends Controller
             $business_details = $this->businessUtil->getDetails($business_id);
             $partner = Partner::findOrFail($id);
             $last_payment = $this->ptUtil->getLastPayment($id);
+            // Additional refactorial one var
+            $last_month_have_to_charge_after = $this->ptUtil->getLastMonthHaveToChargeAfter($id);
 
             // issue_months
             $last_receipt = $this->ptUtil->getLastReceipt($id);
@@ -888,7 +890,7 @@ class PartnerController extends Controller
                 }
             }
 
-            //additional part for problem 31
+            // Additional part for problem 31
             // To get receipts already issued but not paid.
             $unpaid_receipts = PartnerReceipt::where('partner_id', $id)
                 ->where(function ($query) {
@@ -916,7 +918,7 @@ class PartnerController extends Controller
             }
 
             return view("partner::partner.partials.issue_receipt_modal", 
-                compact('partner', 'last_payment', 'issue_months', 'unpaid_receipts', 'unissued_receipts'));
+                compact('partner', 'last_payment', 'issue_months', 'unpaid_receipts', 'unissued_receipts', 'last_month_have_to_charge_after'));
         } catch (\Exception $e) {
             \Log::emergency('File:' . $e->getFile() . 'Line:' . $e->getLine() . 'Message:' . $e->getMessage());
             $output = [

@@ -14,7 +14,7 @@
 
               <!-- Button to Open the PIN Checking Modal -->
               <button type="button" class="btn btn-primary ms-2 px-4 py-0 mb-1 btn-pin-verify hide" data-toggle='modal' 
-                                    id="trigger_checkPinModal" data-target='#checkPinModal' style="font-size: 80%;">Verify PIN</button>
+                      id="trigger_checkPinModal" data-target='#checkPinModal' style="font-size: 80%;">Verify PIN</button>
               @include('partner::partner.partials.confirm_pin_modal')
           </div>
         </section>
@@ -479,8 +479,8 @@
                 for (var i = 0; i < selected_ids.length; i++) {
                   let selected_id = selected_ids[i];
                   let prev_selected_id = parseInt(selected_id) - 1;
-                  let selected_idx = selected_ids.indexOf(prev_selected_id.toString());
-                  if (selected_idx != -1) 
+                  let prev_selected_idx = selected_ids.indexOf(prev_selected_id.toString());
+                  if (prev_selected_idx != -1) 
                       selected_objs[i].to_del = 1
                 }
 

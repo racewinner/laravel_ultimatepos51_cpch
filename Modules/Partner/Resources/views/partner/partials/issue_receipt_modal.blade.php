@@ -50,8 +50,8 @@
                     <div class="form-group">
                         {!! Form::label('last_payment', __('partner::lang.last_month_payment') . ':') !!}
                         <div class="d-flex">
-                            {!! Form::text('last_pay_month', !empty($last_payment) ? $last_payment['month'] : '', ['class' => 'form-control disabled']) !!}
-                            {!! Form::text('last_pay_amount', !empty($last_payment) ? \App\Utils\Util::format_currency($last_payment['amount'], $last_payment['currency']) : '', ['class' => 'form-control disabled']) !!}
+                            {!! Form::text('last_pay_month', !empty($last_month_have_to_charge_after) ? $last_month_have_to_charge_after['month'] : '', ['class' => 'form-control disabled']) !!}
+                            {!! Form::text('last_pay_amount', !empty($last_month_have_to_charge_after) ? \App\Utils\Util::format_currency($last_month_have_to_charge_after['amount'], $last_month_have_to_charge_after['currency']) : '', ['class' => 'form-control disabled']) !!}
                         </div>
                     </div>
                     @endcomponent

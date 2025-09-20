@@ -85,7 +85,74 @@ class PartnerTransactionUtil extends \App\Utils\Util
 
         return true;
     }
+    
+    public function getLastMonthHaveToChargeAfter($partner_id, $additional_payment=0)
+    {
+        try {
+            $query = PartnerReceipt::where('partner_id', $partner_id)
+              ->where(function($query) {
+                $query->whereNull('deleted')->orWhere('deleted', '<>', 1);
+              })
+              ->where('paid', 1);
 
+            if($additional_payment == 1) 
+              $query->where('additional_payment', 1);
+            
+            $last_pay_month = $query->max('to_month');
+
+            /**
+             * Additional alternative code
+             */
+            if (empty(($last_pay_month))) {
+              $query = PartnerReceipt::where('partner_id', $partner_id)
+                ->where(function($query) {
+                  $query->whereNull('deleted')->orWhere('deleted', '<>', 1);
+                })
+                ->where('paid', 0);
+
+              if($additional_payment == 1) 
+                $query->where('additional_payment', 1);
+              
+                $last_pay_month = $query->min('from_month');
+
+                if (empty($last_pay_month))
+                  return null;
+              } 
+
+              $payment = PartnerReceipt::where('partner_id', $partner_id)
+                ->where('to_month', $last_pay_month)
+                ->where(function($query) {
+                  $query->whereNull('deleted')->orWhere('deleted', '<>', 1);
+                })
+                ->first();
+              
+              $last_month_have_to_charge_after = Carbon::parse($last_pay_month)->addMonth();
+              
+              return [
+                  'month' => $last_month_have_to_charge_after?->format('m/Y'),
+                  'amount' => $payment->amount / $payment->months,
+                  'currency' => $payment->currency,
+              ];
+
+            // if (empty($last_pay_month))
+            //     return null;
+
+            // $payment = PartnerReceipt::where('partner_id', $partner_id)
+            //   ->where('to_month', $last_pay_month)
+            //   ->where(function($query) {
+            //     $query->whereNull('deleted')->orWhere('deleted', '<>', 1);
+            //   })
+            //   ->first();
+
+            // return [
+            //     'month' => Carbon::parse($last_pay_month)->format('m/Y'),
+            //     'amount' => $payment->amount / $payment->months,
+            //     'currency' => $payment->currency,
+            // ];
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
     public function getLastPayment($partner_id, $additional_payment=0)
     {
         try {
@@ -94,7 +161,8 @@ class PartnerTransactionUtil extends \App\Utils\Util
                 $query->whereNull('deleted')->orWhere('deleted', '<>', 1);
               })
               ->where('paid', 1);
-            if($additional_payment == 1) $query->where('additional_payment', 1);
+            if($additional_payment == 1) 
+              $query->where('additional_payment', 1);
             $last_pay_month = $query->max('to_month');
             if (empty($last_pay_month))
                 return null;
@@ -139,92 +207,86 @@ class PartnerTransactionUtil extends \App\Utils\Util
 
     public function getDebt($partner_id)
     {
-        $first_pay_month = null;
-        $last_charge_month = null;
-        
         try {
-          $first_pay_month = PartnerReceipt::where('partner_id', $partner_id)
-              ->where('paid', 1)
-              ->where(function($query) {
-                $query->whereNull('deleted')->orWhere('deleted', '<>', 1);
-              })
-              ->max('to_month');
+              $last_pay_month = PartnerReceipt::where('partner_id', $partner_id)
+                  ->where('paid', 1)
+                  ->where(function($query) {
+                    $query->whereNull('deleted')->orWhere('deleted', '<>', 1);
+                  })
+                  ->max('to_month');
 
-          if (empty($first_pay_month)) {
-              $last_charge_month = PartnerReceipt::where('partner_id', $partner_id)
-              ->where('paid', 0)
-              ->where(function($query) {
-                $query->whereNull('deleted')->orWhere('deleted', '<>', 1);
-              })
-              ->min('from_month');
+              if (empty($last_pay_month)) {
+                  $first_charge_month = PartnerReceipt::where('partner_id', $partner_id)
+                      ->where('paid', 0)
+                      ->where(function($query) {
+                        $query->whereNull('deleted')->orWhere('deleted', '<>', 1);
+                      })
+                      ->min('from_month');
 
-              if (empty($last_charge_month))
-                  return null;
-              else 
-                  $last_charge_month = Carbon::parse($last_charge_month);
-          } else {
-              $first_pay_month = Carbon::parse($first_pay_month);
-              $last_charge_month = Carbon::parse($first_pay_month)->addMonth();
+                  if (empty($first_charge_month))
+                      return null;
+
+                  $first_charge_month = Carbon::parse($first_charge_month);
+              } else {
+                  $first_charge_month = Carbon::parse($last_pay_month)->addMonth();
+                  $last_charge_ym_str = substr($last_pay_month, 0, 7);
+
+                  $now = new \DateTime(date('Y-m'));
+                  $currentYearMonth = $now->format('Y-m'); // e.g., "2025-09"
+
+                  if ($last_charge_ym_str == $currentYearMonth)
+                      return null;
+              }
+
+              $today = new \DateTime(date('Y-m-d'));
+              $interval = $first_charge_month->diff($today);
+              $debt_months = $interval->m + ($interval->y * 12);
+
+              $partner = Partner::findOrFail($partner_id);
+
+              /**
+               * Add new refactorial vars
+               */
+              $first_month_have_charged_last = null;
+              $last_month_have_to_charge_after = null;
+              
+              $first_month_have_charged_last = PartnerReceipt::where('partner_id', $partner_id)
+                  ->where('paid', 1)
+                  ->where(function($query) {
+                    $query->whereNull('deleted')->orWhere('deleted', '<>', 1);
+                  })
+                  ->max('to_month');
+
+              if (empty($first_month_have_charged_last)) {
+                  $last_month_have_to_charge_after = PartnerReceipt::where('partner_id', $partner_id)
+                  ->where('paid', 0)
+                  ->where(function($query) {
+                    $query->whereNull('deleted')->orWhere('deleted', '<>', 1);
+                  })
+                  ->min('from_month');
+
+                  if (empty($last_month_have_to_charge_after))
+                      return null;
+                  else 
+                      $last_month_have_to_charge_after = Carbon::parse($last_month_have_to_charge_after);
+              } else {
+                  $first_month_have_charged_last = Carbon::parse($first_month_have_charged_last);
+                  $last_month_have_to_charge_after = Carbon::parse($first_month_have_charged_last)->addMonth();
+              }
+
+              return [
+                  'first_month' => $first_charge_month->format('m/Y'),
+                  'last_month' => Carbon::now()->subMonth()->format('m/Y'),
+                  'monthly_fee' => $partner->monthly_fee,
+                  'months' => $debt_months,
+                  'currency' => $partner->currency,
+                  // new refactorial vars
+                  'first_month_have_charged_last' => $first_month_have_charged_last?->format('m/Y'),
+                  'last_month_have_to_charge_after' => $last_month_have_to_charge_after?->format('m/Y'),
+              ];
+          } catch (\Exception $e) {
+              throw $e;
           }
-
-          $partner = Partner::findOrFail($partner_id);
-          return [
-              'first_month' => $first_pay_month?->format('m/Y'),
-              'last_month'  => $last_charge_month?->format('m/Y'),
-              'monthly_fee' => $partner->monthly_fee,
-              'currency' => $partner->currency,
-          ];
-          
-        } catch (\Exception $e) {
-            throw $e;
-        }
-
-        // try {
-        //     $last_pay_month = PartnerReceipt::where('partner_id', $partner_id)
-        //         ->where('paid', 1)
-        //         ->where(function($query) {
-        //           $query->whereNull('deleted')->orWhere('deleted', '<>', 1);
-        //         })
-        //         ->max('to_month');
-
-        //     if (empty($last_pay_month)) {
-        //         $first_charge_month = PartnerReceipt::where('partner_id', $partner_id)
-        //             ->where('paid', 0)
-        //             ->where(function($query) {
-        //               $query->whereNull('deleted')->orWhere('deleted', '<>', 1);
-        //             })
-        //             ->min('from_month');
-
-        //         if (empty($first_charge_month))
-        //             return null;
-
-        //         $first_charge_month = Carbon::parse($first_charge_month);
-        //     } else {
-        //         $first_charge_month = Carbon::parse($last_pay_month)->addMonth();
-        //         $last_charge_ym_str = substr($last_pay_month, 0, 7);
-
-        //         $now = new \DateTime(date('Y-m'));
-        //         $currentYearMonth = $now->format('Y-m'); // e.g., "2025-09"
-
-        //         if ($last_charge_ym_str == $currentYearMonth)
-        //             return null;
-        //     }
-
-        //     $today = new \DateTime(date('Y-m-d'));
-        //     $interval = $first_charge_month->diff($today);
-        //     $debt_months = $interval->m + ($interval->y * 12);
-
-        //     $partner = Partner::findOrFail($partner_id);
-        //     return [
-        //         'first_month' => $first_charge_month->format('m/Y'),
-        //         'last_month' => Carbon::now()->subMonth()->format('m/Y'),
-        //         'monthly_fee' => $partner->monthly_fee,
-        //         'months' => $debt_months,
-        //         'currency' => $partner->currency,
-        //     ];
-        // } catch (\Exception $e) {
-        //     throw $e;
-        // }
     }
 
     public function hasReceiptIssued($partner_id, $month, $additional_payment=0)
