@@ -203,8 +203,8 @@ return [
     'add_salon' => 'Agregar Salon',
     'edit_salon' => 'Edición Salon',
 
-    'partner_booking' => 'Reserva de socios',
-    'list_bookings' => 'Lista de reservas',
+    'partner_booking' => 'Reservas',
+    'list_bookings' => 'Reservas de Parque',
     'cost' => 'Costo',
     'provisional_booking' => 'Reserva Provisoria',
     'confirmed_booking' => 'Reserva Confirmada',

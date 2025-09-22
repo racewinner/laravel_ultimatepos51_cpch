@@ -206,8 +206,8 @@ return [
     'add_salon' => 'Add Salon',
     'edit_salon' => 'Edit Salon',
 
-    'partner_booking' => 'Partner Reservation',
-    'list_bookings' => 'Reservation List',
+    'partner_booking' => 'Reservations',
+    'list_bookings' => 'Park Reservations',
     'cost' => 'Cost',
     'provisional_booking' => 'Provisional Booking',
     'confirmed_booking' => 'Conformed Booking',
