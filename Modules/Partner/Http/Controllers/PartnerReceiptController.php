@@ -149,7 +149,7 @@ class PartnerReceiptController extends Controller
                     return $row->partner->display_name;
                 })
                 ->addColumn('type', function($row) {
-                    return $row->additional_payment ? "<span class='additional-payment'>Additional Payment</span>" : '<span>Normal</span>';
+                    return $row->additional_payment ? "<span class='additional-payment'>Pago adicional</span>" : '<span>Normal</span>';
                 })
                 ->addColumn('bulk_chkbox', function ($row) {
                     return '<input type="checkbox" class="row-select" value="' . $row->id . '">';
