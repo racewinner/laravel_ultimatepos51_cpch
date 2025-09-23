@@ -1,0 +1,4 @@
+###25.09.22
+Added is_only_cuota, additional_service_ids fields into PartnerReceipt table
+Duplicated PartnerReceiptController's postIssueReceipt into postIssueReceiptUKS
+Changed PartnerReceiptController's postIssueReceipt
