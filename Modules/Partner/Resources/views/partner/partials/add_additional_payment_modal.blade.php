@@ -1,12 +1,12 @@
 <div class="modal-dialog modal-lg" role="document" style="width: 1000px;">
-    <input type='hidden' name='partner_id' value="{{$partner->id}}" />
-    <input type="hidden" name="additional_fee_service_ids" value="{{ $partner->additional_fee_service_ids }}" />
 
     <div class="modal-content">
         {!! Form::open([
             'url' => action([\Modules\Partner\Http\Controllers\PartnerReceiptController::class, 'postIssueReceipt']),
             'method' => 'post',
         ]) !!}
+        <input type='hidden' name='partner_id' value="{{$partner->id}}" />
+        <input type="hidden" name="additional_fee_service_ids" value="{{ $partner->additional_fee_service_ids }}" />
 
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
