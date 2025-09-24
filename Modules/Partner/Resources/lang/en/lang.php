@@ -83,6 +83,7 @@ return [
     'delete_partner' => 'Delete Parnter',
     'issue_receipt' => 'Issue Receipt',
     'partner_registration' => 'Partner Registration',
+    'partner_leave_print_lavel' => 'Partner Cancellation',
 
     'create' => 'Enter',
     'edit' => 'Modify',

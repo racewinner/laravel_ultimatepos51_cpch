@@ -26,6 +26,8 @@ Route::middleware('web', 'authh', 'auth', 'SetSessionData', 'language', 'timezon
     Route::get('partners/{id}/leave', [PartnerController::class, 'getLeave']);
     Route::post('partners/{id}/leave', [PartnerController::class, 'postLeave']);
     Route::get('partners/{id}/print', [PartnerController::class, 'print']);
+    Route::get('partners/{id}/print_leave', [PartnerController::class, 'print_leave']);
+
     Route::get('partners/{id}/reEntry', [PartnerController::class, 'getReEntry']);
     Route::get('partners/{id}/ledger', [PartnerController::class, 'showLedger']);
     Route::get('partners/{id}/issue_receipt', [PartnerController::class, 'getIssueReceipt']);

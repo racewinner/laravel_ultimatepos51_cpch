@@ -189,7 +189,7 @@ $title = __('partner::lang.delete_partner');
                                 console.log(result);
                                 if (result.success == true) {
                                     toastrSwal(result.msg, 'success', function() {
-                                        window.location.href = `/partner/partners?print_partner_id=${partner_id}`;
+                                        window.location.href = `/partner/partners?print_partner_id=${partner_id}&print_partner_leave=1`;
                                     });
                                 } else {
                                     toastrSwal(result.msg, 'error');

@@ -358,12 +358,12 @@ if ($action == 'create') {
         @component('components.widget', ['class' => 'box-primary', 'header' => '<h4>' . __('partner::lang.additional_fee_services') . '</h4>'])
         <div class="row additional_fee_services">
             @if(!empty($partner))
-                <div class="col-sm-12 mb-4">
+                <div class="col-sm-12 mb-4 {{ (($action == 'edit') && auth()->user()->enable_pin_partner) ? '' : 'hide' }}">
                     <button type="button" class="btn btn-primary px-4 py-0 mb-1 btn-pin-verify" data-toggle='modal'
                                 data-target='#checkPinModal' style="font-size: 80%;">Verify PIN</button>
                 </div>
                 @foreach ($partner->not_fee_services as $service)
-                <div class="col-sm-3 mb-4 {{ (($action == 'edit' || $action == 'reEntry') && auth()->user()->enable_pin_partner) ? 'input-pin-verify disabled' : '' }}">
+                <div class="col-sm-3 mb-4 {{ (($action == 'edit') && auth()->user()->enable_pin_partner) ? 'input-pin-verify disabled' : '' }}">
                     <div class="checkbox">
                         <label class='p-0'>
                             {!! Form::checkbox(

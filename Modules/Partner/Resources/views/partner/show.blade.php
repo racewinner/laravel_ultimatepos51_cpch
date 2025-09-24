@@ -4,8 +4,13 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <div class="d-flex justify-content-center align-items-center">
                 <h4 class="modal-title text-center">
-                    {{ $partner->newly_registered ? __('partner::lang.partner_registration') : __('partner::lang.show_partner') }}
-                    ({{$partner->display_name}})
+                    @if($partner->leave == 1)
+                      {{ __('partner::lang.partner_leave_print_lavel') }}
+                    @else
+                      {{ $partner->newly_registered ? __('partner::lang.partner_registration') : __('partner::lang.show_partner') }}
+                    @endif
+
+                      ({{$partner->display_name}})
                 </h4>
                 <span class="ms-4 partner-status {{ empty($partner->leave) ? 'active' : 'inactive' }}">
                     {{ empty($partner->leave) ? 'Active' : 'InActive' }}
