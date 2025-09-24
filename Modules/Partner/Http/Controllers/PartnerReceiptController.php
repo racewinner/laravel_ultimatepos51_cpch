@@ -605,7 +605,7 @@ class PartnerReceiptController extends Controller
 
             $pdf = PDF::loadView(
                 'partner::partner_receipt.partials.ticket_pdf',
-                compact('business_details', 'receipt_groups', 'user', 'partner', 'base64Logo', 'type')
+                compact('business_details', 'receipt_groups', 'user', 'partner', 'base64Logo', 'type', 'receipt')
             );
 
             $pdf->setPaper([0, 0, 265, 1100]);

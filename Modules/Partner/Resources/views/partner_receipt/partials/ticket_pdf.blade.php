@@ -22,6 +22,7 @@
 <?php
     $first_receipt = $receipts[0];
     $total_amount = 0;
+    $total_amount_additional = 0;
 ?>
     <section style="padding: 10px; margin-bottom: 50px;">
         <div style='text-align:right; font-size: 90%;'>
@@ -101,6 +102,9 @@
                         $total_amount += $receipt->amount;
                     ?>
                         @foreach($receipt->services as $service)
+                        <?php 
+                            $total_amount_additional += $service->unit_cost * $receipt->months;
+                        ?>
                             <tr style="border: none;">
                                 <td style="text-align:left; padding-top:5px; padding-bottom: 5px;">{{$service->name}}</td>
                                 <td>{{ $receipt->period }}</td>
@@ -116,8 +120,18 @@
         <div style="text-align:right; margin-top: 20px;">
             <div style="padding: 5px 0px; font-weight: bold;">
                 <label style="font-weight: 400 !important; text-transform:uppercase">@lang('invoice.total'):</label>
-                <span
-                    style="margin-left: 10px;">{{ \App\Utils\Util::format_currency($total_amount, $first_receipt->currency) }}</span>
+                @if ($receipt->additional_payment !== 1)
+                  <span
+                      style="margin-left: 10px;">{{ \App\Utils\Util::format_currency($total_amount, $first_receipt->currency) }}
+                  </span>
+                @else
+                  <span
+                      style="margin-left: 10px;">{{ \App\Utils\Util::format_currency($total_amount_additional, $first_receipt->currency) }}
+                  </span>
+                @endif
+                <!-- <span
+                    style="margin-left: 10px;">{{ \App\Utils\Util::format_currency($total_amount, $first_receipt->currency) }}
+                </span> -->
             </div>
         </div>
 

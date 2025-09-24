@@ -363,7 +363,7 @@ if ($action == 'create') {
                                 data-target='#checkPinModal' style="font-size: 80%;">Verify PIN</button>
                 </div>
                 @foreach ($partner->not_fee_services as $service)
-                <div class="col-sm-3 mb-4 {{ ($action == 'edit' && auth()->user()->enable_pin_partner) ? 'input-pin-verify disabled' : '' }}">
+                <div class="col-sm-3 mb-4 {{ (($action == 'edit' || $action == 'reEntry') && auth()->user()->enable_pin_partner) ? 'input-pin-verify disabled' : '' }}">
                     <div class="checkbox">
                         <label class='p-0'>
                             {!! Form::checkbox(
