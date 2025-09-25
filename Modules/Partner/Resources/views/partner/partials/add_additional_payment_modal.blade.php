@@ -44,7 +44,7 @@
         </div>
 
         <div class="modal-footer">
-            <button type="submit" class="btn btn-primary" >@lang('invoice.issue')</button>
+            <button type="submit" class="btn btn-primary {{ $partner->additional_fee_service_ids == '' ? 'disabled' : '' }}" >@lang('invoice.issue')</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">@lang('messages.close')</button>
         </div>
 

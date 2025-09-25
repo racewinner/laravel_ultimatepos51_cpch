@@ -623,7 +623,7 @@ if ($action == 'create') {
                 },
                 dangerMode: false,
             }).then((willPay) => {
-              // debugger
+              debugger
                 if(!willPay) {
                     $.ajax({
                         method: 'POST',
@@ -635,6 +635,7 @@ if ($action == 'create') {
                         },
                         dataType: 'json',
                         success: function(result) {
+                          debugger
                             if(result.newly_issued_count > 0) {
                                 toastrSwal(
                                     "{{ __('partner::messages.receipt_issued_success') }}", 
@@ -653,10 +654,12 @@ if ($action == 'create') {
                                     }
                                 );
                             } else {
+                              debugger
                                 toastrSwal(
                                     result.msg[0].message, 
                                     result.msg[0].type,
                                     function () {
+                                      debugger
                                         window.location.href = `/partner/partners?print_partner_id=${partner_id}`;
                                     }
                                 );
@@ -664,6 +667,7 @@ if ($action == 'create') {
                         }
                     })
                 } else {
+                  debugger
                     showIssueReceiptModal(partner_id);
                 }
             })
@@ -671,6 +675,7 @@ if ($action == 'create') {
     @endif
 
         function handleSave() {
+          debugger
             const form = $("form#editPartnerForm")[0];
             const data = new FormData(form);
             var url = $(form).attr('action');
@@ -802,9 +807,11 @@ if ($action == 'create') {
 
         @if($action == 'create')
             $(document).on('hidden.bs.modal', '.issue-receipt-modal', function (e) {
-                setTimeout(function() {
-                    window.location.href = `/partner/partners?print_partner_id=${partner_id}`;
-                }, 1000);
+              debugger
+              //ooooooooooo
+                // setTimeout(function() {
+                //     window.location.href = `/partner/partners?print_partner_id=${partner_id}`;
+                // }, 1000);
             })
         @endif
 

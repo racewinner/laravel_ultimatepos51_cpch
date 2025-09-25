@@ -7,6 +7,7 @@ use App\Business;
 use Modules\Partner\Entities\Partner;
 use Modules\Partner\Entities\PartnerCategory;
 use Modules\Partner\Entities\PartnerReceipt;
+use Modules\Partner\Entities\Service;
 use Modules\Partner\Entities\Radio;
 use Modules\Partner\Entities\Zone;
 use Modules\Partner\Entities\Locality;
@@ -42,6 +43,7 @@ class PartnerReceiptController extends Controller
         $business_id = request()->session()->get('user.business_id');
 
         if (request()->ajax()) {
+
             $query = PartnerReceipt::leftjoin('partners', 'partners.id', '=', 'partner_receipts.partner_id')
                 ->where('business_id', $business_id)
                 ->whereDoesntHave('partner.leave')
@@ -119,14 +121,14 @@ class PartnerReceiptController extends Controller
                             </span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-left" role="menu">';
-                    $html .= '<li><a href="/partner/receipts/' . $row->id . '?type=receipt" target="__blank"><i class="fas fa-eye" aria-hidden="true"></i>' . __('partner::lang.view_receipt') . '</a></li>';
+                    $html .= '<li><a href="/partner/receipts/xprint/' . $row->id . '?type=receipt" target="_blank"><i class="fas fa-eye" aria-hidden="true"></i>' . __('partner::lang.view_receipt') . '</a></li>';
                     
                     if(empty($row->partner->leave)) {
                         $html .= '<li><a target="_blank" href="/partner/receipts/' . $row->id . '/print?type=receipt"><i class="fa fa-print" aria-hidden="true"></i>' . __("partner::lang.print_receipt") . '</a></li>';
                     }
 
                     if ($row->paid == 1) {
-                        $html .= '<li><a href="/partner/receipts/' . $row->id . '?type=payment" target="__blank"><i class="fas fa-eye" aria-hidden="true"></i>' . __('partner::lang.view_payment') . '</a></li>';
+                        $html .= '<li><a href="/partner/receipts/xprint/' . $row->id . '?type=payment" target="_blank"><i class="fas fa-eye" aria-hidden="true"></i>' . __('partner::lang.view_payment') . '</a></li>';
                         if(empty($row->partner->leave)) {
                             $html .= '<li><a target="_blank" href="/partner/receipts/' . $row->id . '/print?type=payment"><i class="fa fa-print" aria-hidden="true"></i>' . __("partner::lang.print_payment") . '</a></li>';
                         }
@@ -175,10 +177,38 @@ class PartnerReceiptController extends Controller
                 ->editColumn('to_month', function ($row) {
                     return Carbon::parse($this->to_month)->format('m/Y');
                 })
+                ->editColumn('amount', function ($row) {
+                  $service_rows = Service::all()->toArray();
+                  $service_amounts = array_map(function($item) {
+                    return [
+                        $item['id'] => $item['unit_cost']
+                      ];
+                  }, $service_rows);
+
+                  $itm_service_ids = $row->service_ids;
+                  $my_service_array = explode(',', $itm_service_ids);
+                  $real_amount = 0;
+
+                  foreach ($my_service_array as $itmdt) {
+                    foreach ($service_amounts as $item) {
+
+                      $keys = array_keys($item);
+                      $values = array_values($item);
+                      $key = $keys[0];
+                      $value = $values[0];
+
+                      if(intval($itmdt) == $key) {
+                        $real_amount += $value;
+                      }
+                    }
+                  }
+                  return $real_amount;
+                })
                 ->rawColumns(['action', 'partner_name', 'period', 'paid', 'bulk_chkbox', 'type', 'from_month', 'to_month'])
                 ->make(true);
-
+                
             return $output;
+
         }
 
         $zones = Zone::allZones($business_id);
@@ -622,6 +652,45 @@ class PartnerReceiptController extends Controller
         }
     }
 
+    public function xprint($id)
+    {
+        try {
+            $business_id = request()->session()->get('user.business_id');
+            $businessDetails = $this->businessUtil->getDetails($business_id);
+            $user = auth()->user();
+            $type = request()->get('type');
+
+            $receipt = PartnerReceipt::with(['currency', 'partner'])->findOrFail($id);
+            $receiptGroups = [
+                $type == 'receipt' ? $receipt->ref_no : $receipt->payment_ref_no => [$receipt]
+            ];
+
+            // logo image
+            $imageUrl = public_path('/images/partner/mark5.png');
+            $imageData = file_get_contents($imageUrl);
+            $base64 = base64_encode($imageData);
+            $base64Logo = 'data:image/jpeg;base64,' . $base64;
+
+            // $pdf = PDF::loadView(
+            //     'partner::partner_receipt.partials.ticket_pdf',
+            //     compact('business_details', 'receipt_groups', 'user', 'partner', 'base64Logo', 'type', 'receipt')
+            // );
+
+            // $pdf->setPaper([0, 0, 265, 1100]);
+            // $pdfContent = $pdf->output();
+
+            // // Send as a downloadable file response
+            // $filename = $type . '_(' . $receipt->partner->display_name . ')_(' . $receipt->period . ').pdf';
+            return view(
+                'partner::partner_receipt.xprint',
+                compact('businessDetails', 'receiptGroups', 'user', 'base64Logo', 'type', 'receipt')
+          );
+      } catch (\Exception $e) {
+            \Log::emergency('File:' . $e->getFile() . 'Line:' . $e->getLine() . 'Message:' . $e->getMessage());
+            abort(500, __('messages.something_went_wrong'));
+        }
+    }
+
     public function bulkPrint()
     {
         try {
@@ -630,6 +699,7 @@ class PartnerReceiptController extends Controller
             $user = auth()->user();
 
             $type = request()->input('type');
+            // $ref_nos = explode(',', request()->input('ref_nos'));
             $ref_nos = explode(',', request()->input('ref_nos'));
 
             // To get receipts

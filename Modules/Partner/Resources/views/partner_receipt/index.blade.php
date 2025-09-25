@@ -565,6 +565,7 @@
                         },
                         dangerMode: false,
                     }).then((willPay) => {
+                      debugger
                         if (willPay) {
                             const data = {
                                 selected_ids,

@@ -248,6 +248,7 @@
             })
 
             @if(!empty($print_partner_id))
+            debugger
             $("a.print-partner").trigger('click');
             @endif
         })

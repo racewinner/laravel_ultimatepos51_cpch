@@ -67,6 +67,7 @@ Route::middleware('web', 'authh', 'auth', 'SetSessionData', 'language', 'timezon
     Route::resource('bookings', PartnerBookingController::class);
 
     Route::get('receipts/{id}/print', [PartnerReceiptController::class, 'print']);
+    Route::get('receipts/xprint/{id}', [PartnerReceiptController::class, 'xprint']);
     Route::get('receipts/{id}/settle', [PartnerReceiptController::class, 'settle']);
     Route::get('receipts/{id}/prev_unpaid', [PartnerReceiptController::class, 'checkPrevUnpaid']);
     Route::get('receipts/issue', [PartnerReceiptController::class, 'getIssueReceipt']);
