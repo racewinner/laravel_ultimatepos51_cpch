@@ -274,15 +274,41 @@ class PartnerReceiptController extends Controller
             $p_query->where('paid', 1)->select('*', 'paid_on as transaction_date');
             $payments = $p_query->get();
 
+            // To get service informations
+            $service_rows = Service::all()->toArray();
+            $service_amounts = array_map(function($item) {
+              return [
+                  $item['id'] => $item['unit_cost']
+                ];
+            }, $service_rows);
+
             $rows = [];
             foreach ($receipts as $r) {
+                $itm_service_ids = $r->service_ids;
+                $my_service_array = explode(',', $itm_service_ids);
+                $real_amount = 0;
+
+                foreach ($my_service_array as $itmdt) {
+                  foreach ($service_amounts as $item) {
+
+                    $keys = array_keys($item);
+                    $values = array_values($item);
+                    $key = $keys[0];
+                    $value = $values[0];
+
+                    if(intval($itmdt) == $key) {
+                      $real_amount += $value;
+                    }
+                  }
+                }
+
                 $rows[] = [
                     'id' => $r->id,
                     'transaction_date' => $r->transaction_date,
                     'services' => $r->services,
                     'document' => __('invoice.receipt'),
                     'credit' => 0,
-                    'debit' => $r->amount,
+                    'debit'  => $real_amount,//$r->amount,
                     'ref_no' => $r->ref_no,
                     'months' => $r->months,
                     'period' => $r->period,
@@ -290,12 +316,30 @@ class PartnerReceiptController extends Controller
                 ];
             }
             foreach ($payments as $p) {
+                $itm_service_ids = $p->service_ids;
+                $my_service_array = explode(',', $itm_service_ids);
+                $real_amount = 0;
+
+                foreach ($my_service_array as $itmdt) {
+                  foreach ($service_amounts as $item) {
+
+                    $keys = array_keys($item);
+                    $values = array_values($item);
+                    $key = $keys[0];
+                    $value = $values[0];
+
+                    if(intval($itmdt) == $key) {
+                      $real_amount += $value;
+                    }
+                  }
+                }
+
                 $rows[] = [
                     'id' => $p->id,
                     'transaction_date' => $p->transaction_date,
                     'services' => $p->services,
                     'document' => __('lang_v1.payment'),
-                    'credit' => $r->amount,
+                    'credit' => $real_amount,//$r->amount,
                     'debit' => 0,
                     'ref_no' => $r->payment_ref_no,
                     'months' => $r->months,
