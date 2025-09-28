@@ -142,7 +142,7 @@ class PartnerController extends Controller
                 ->editColumn('surname', function ($row) {
                     $html = "<div>$row->surname</div>";
                     if (!empty($row->leave)) {
-                        $html .= "<div class='partner-left'>" . __('messages.deleted') . "</div>";
+                        $html .= "<div class='partner-left' data-check-value='" . $row->id . "'>" . __('messages.deleted') . "</div>";
                     }
                     return $html;
                 })

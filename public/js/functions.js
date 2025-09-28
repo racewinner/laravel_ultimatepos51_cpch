@@ -525,10 +525,22 @@ function init_tinymce(editor_id) {
 }
 
 function getSelectedRows() {
+  debugger
     var selected_rows = [];
     var i = 0;
     $('.row-select:checked').each(function () {
         selected_rows[i++] = $(this).val();
+    });
+
+    return selected_rows;
+}
+
+function getSelectedRowsByClassName(clsName) {
+  debugger
+    var selected_rows = [];
+    var i = 0;
+    $('.'+clsName).each(function () {
+        selected_rows[i++] = $(this).data('check-value');
     });
 
     return selected_rows;

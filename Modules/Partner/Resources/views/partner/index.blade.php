@@ -237,10 +237,31 @@
             );
 
             $(document).on('click', '#btn_bulk_action', function (e) {
+              debugger
                 e.preventDefault();
                 let selected_rows = getSelectedRows();
-
+                let deleted_selected_rows = getSelectedRowsByClassName('partner-left').map(itm => itm.toString())
+debugger
+                
+              debugger
                 if (selected_rows.length > 0) {
+                    // check if selected rows indlude deleted item
+                    let isDeletedRowIncluded = false;
+                    for (let i=0;i<selected_rows.length;i++) {
+                      let targetRow = selected_rows[i].toString();
+                      if (deleted_selected_rows.includes(targetRow)) {
+                        isDeletedRowIncluded = true;
+                        break;
+                      }
+                    }
+                    if (isDeletedRowIncluded) {
+                      swal({
+                            text: "no se pueden realizar pagos para este socio ya que su estado es Borrado",
+                            icon: 'error'
+                        });
+                      return;
+                    }
+                  
                     $('#bulk_action_form input#selected_rows').val(selected_rows);
                     $('#bulk_action_form input#action').val('edit');
                     $('#bulk_action_form').submit();
