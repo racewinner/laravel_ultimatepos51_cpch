@@ -687,6 +687,7 @@ if ($action == 'create') {
                 processData: false,
                 contentType: false,
                 success: function (result) {
+                  debugger
                     if (result.success == 1) {
                         partner_id = result.partner_id;
 

@@ -774,11 +774,12 @@ class PartnerController extends Controller
             $partner->newly_registered = $partner->created_at == $partner->updated_at ? true : false;
             $partner->debt = $this->ptUtil->getDebt($id);
             $partner->leave = 1;
+            $partner->leave_info = $this->ptUtil->getLeave($id);
 
             $receipt = [
                 'is_enabled' => false,
                 'print_type' => 'browser',
-                'html_content' => view('partner::partner.show', compact('partner'))->render(),
+                'html_content' => view('partner::partner.show_leave', compact('partner'))->render(),
                 'printer_config' => [],
                 'data' => [],
             ];

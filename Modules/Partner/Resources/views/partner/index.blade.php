@@ -256,7 +256,7 @@ debugger
                     }
                     if (isDeletedRowIncluded) {
                       swal({
-                            text: "no se pueden realizar pagos para este socio ya que su estado es Borrado",
+                            text: "No se puede editar el socio ya que su estado es Borrado",
                             icon: 'error'
                         });
                       return;

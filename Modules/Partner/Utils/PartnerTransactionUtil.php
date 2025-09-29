@@ -3,9 +3,12 @@ namespace Modules\Partner\Utils;
 
 use App\Business;
 use Modules\Partner\Entities\Partner;
+use Modules\Partner\Entities\PartnerHistory;
+use Modules\Partner\Entities\PartnerLeave;
 use Modules\Partner\Entities\PartnerTransaction;
 use Modules\Partner\Entities\PartnerTransactionPayment;
 use Modules\Partner\Entities\PartnerReceipt;
+use Yajra\DataTables\Facades\DataTables;
 use \Carbon\Carbon;
 
 class PartnerTransactionUtil extends \App\Utils\Util
@@ -205,6 +208,28 @@ class PartnerTransactionUtil extends \App\Utils\Util
         }
     }
 
+    public function getLeave($partner_id) 
+    {
+        try {
+              $histories = PartnerLeave::from("partner_leaves as pl")
+                  ->where('pl.partner_id', $partner_id)
+                  ->join("partner_leave_types as plt", "plt.id", "=", "pl.leave_type_id")
+                  ->join("partner_leave_reasons as plr", "plr.id", "=", "pl.leave_reason_id")
+                  ->orderBy('pl.id', 'DESC')
+                  ->select(
+                      'pl.*',
+                      'plt.name as plt_name',
+                      'plr.name as plr_name',
+                  )
+                  ->first();
+              
+  
+              return $histories;
+
+        } catch (\Exception $e) {
+          throw $e;
+        }
+    }
     public function getDebt($partner_id)
     {
         try {
