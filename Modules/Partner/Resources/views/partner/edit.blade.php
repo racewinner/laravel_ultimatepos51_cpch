@@ -529,14 +529,16 @@ if ($action == 'create') {
         }
 
         function onReEntryBtnClicked() {
+            debugger
             const form = $("form#editPartnerForm")[0];
             const reEntryReason = getReEntryReason();
+            
             if (reEntryReason == 'extension') {
                 if(debt_months > 12) {
                     toastrSwal("@lang('partner::messages.must_reEnter_due_to_third_article')", 'error');
                     $(form).find("button[type='submit']").prop('disabled', false);
                 } else {
-                    showUnsettledReceipts(partner_id);
+                    showUnsettledReceipts(partner_id, true);
                     $(form).find("button[type='submit']").prop('disabled', false);
                 }
                 
@@ -545,9 +547,10 @@ if ($action == 'create') {
                     toastrSwal("@lang('partner::messages.must_reEnter_due_to_extension')", 'error');
                     $(form).find("button[type='submit']").prop('disabled', false);
                 } else {
-                    showUnsettledReceipts(partner_id);
+                    showUnsettledReceipts(partner_id, true);
                     $(form).find("button[type='submit']").prop('disabled', false);
                 }
+
             } else if (reEntryReason == "common_reEntry") {
                 swal({
                     text: "@lang('partner::messages.confirm_common_reEntry')",
@@ -557,6 +560,7 @@ if ($action == 'create') {
                         confirm: "@lang('messages.yes')"
                     },
                     dangerMode: false,
+
                 }).then((yes) => {
                     if(yes) {
                         $.ajax({
@@ -572,6 +576,7 @@ if ($action == 'create') {
                         $(form).find("button[type='submit']").prop('disabled', false);
                     }
                 })
+
             } else if (reEntryReason == "amnesty") {
                 swal({
                     text: "@lang('partner::messages.confirm_amnesty_reEntry')",
@@ -581,8 +586,9 @@ if ($action == 'create') {
                         confirm: "@lang('messages.yes')"
                     },
                     dangerMode: false,
+
                 }).then((yes) => {
-                    if(yes) {
+                    if (yes) {
                         const now = new Date();
                         const mY = `${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
                         const issue_months = `${mY}-${mY}`;

@@ -1007,6 +1007,47 @@ class PartnerController extends Controller
         }
     }
 
+    public function showUnsettledReceipts4IssueAndReenter($partner_id)
+    {
+        try {
+            $partner = Partner::findOrFail($partner_id);
+
+            // To get receipts already issued but not paid.
+            $unpaid_receipts = PartnerReceipt::where('partner_id', $partner_id)
+                ->where(function ($query) {
+                    $query->whereNull('deleted')->orWhere('deleted', '<>', 1);
+                })
+                ->where('paid', '!=', 1)->with(['editor', 'partner', 'currency'])->get();
+
+            // To get receipts not-issued until when the partner was cancelled.
+            $last_receipt = $this->ptUtil->getLastReceipt($partner_id);
+            if (!empty($last_receipt)) {
+                $unissued_start_month = Carbon::createFromFormat('m/Y', $last_receipt['month'])->addMonth();
+                $today = Carbon::now();
+
+                if ($unissued_start_month < $today) {
+                    $unissued_receipts = [
+                        'start_month' => "$unissued_start_month->month/$unissued_start_month->year",
+                        'end_month' => "$today->month/$today->year"
+                    ];
+                } else {
+                    $unissued_receipts = [
+                        'start_month' => "$unissued_start_month->month/$unissued_start_month->year",
+                        'end_month' => "$unissued_start_month->month/$unissued_start_month->year",
+                    ];
+                }
+            }
+
+            return view(
+                'partner::partner.partials.unsettled_receipts_modal_for_issue_and_reenter',
+                compact('partner', 'unpaid_receipts', 'unissued_receipts')
+            );
+        } catch (\Exception $e) {
+            \Log::emergency('File:' . $e->getFile() . 'Line:' . $e->getLine() . 'Message:' . $e->getMessage());
+            abort(500, __('messages.something_went_wrong'));
+        }
+    }
+
     public function showUnsettledReceipts($partner_id)
     {
         try {

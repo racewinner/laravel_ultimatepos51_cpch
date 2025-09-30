@@ -33,6 +33,7 @@ Route::middleware('web', 'authh', 'auth', 'SetSessionData', 'language', 'timezon
     Route::get('partners/{id}/issue_receipt', [PartnerController::class, 'getIssueReceipt']);
     Route::get('partners/{id}/add_additional_payment', [PartnerController::class, 'getAddAdditionalPayment']);
     Route::get('partners/{id}/unsettled', [PartnerController::class, 'showUnsettledReceipts']);
+    Route::get('partners/{id}/unsettled_for_issue_and_reenter', [PartnerController::class, 'showUnsettledReceipts4IssueAndReenter']);
     Route::post('partners/bulk_action', [PartnerController::class, 'bulkAction']);
     Route::post('partners/bulk_update', [PartnerController::class, 'bulkUpdate']);
     Route::resource('partners', PartnerController::class);

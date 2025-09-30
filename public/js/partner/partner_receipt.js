@@ -100,8 +100,13 @@ function showIssueReceiptModal(partner_id) {
     })
 }
 
-function showUnsettledReceipts(partner_id) {
-    const url = `/partner/partners/${partner_id}}/unsettled`;
+function showUnsettledReceipts(partner_id, issue_and_reenter) {
+
+    let url = `/partner/partners/${partner_id}}/unsettled`;
+    if (issue_and_reenter) {
+      url = `/partner/partners/${partner_id}}/unsettled_for_issue_and_reenter`;
+    }
+    
     const container = $(".unsettled-receipts-modal");
 
     $.ajax({
@@ -333,7 +338,7 @@ debugger
                 if (result.success == 1) {
                     toastrSwalArray(result.msg, function() {
                         if(result.new_receipt_ref_nos?.length > 0) {
-                            printReceipts(result.new_receipt_ref_nos, paid)
+                                                    printReceipts(result.new_receipt_ref_nos, paid)
                         }
                     });
                 } else {
@@ -343,4 +348,45 @@ debugger
             }
         });
     })
+
+    $(document).on('click', '.unsettled-receipts-modal #btn_issue_receipts_for_issue_and_reenter', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const $modal = $(".unsettled-receipts-modal");
+      const url = "/partner/receipts/issue";
+      const paid = $modal.find('input[name="paid"]')[0].checked ? 1 : 0;
+      const data = {
+          partner_id: $("input[name='partner_id']").val(),
+          ignore_leave: 1,
+          issue_months: $modal.find('input[name="issue_months"]').val(),
+          paid: paid,
+      }
+
+      $.ajax({
+          method: 'POST',
+          url,
+          data,
+          dataType: 'json',
+          success: function (result) {
+              if (result.success == 1) {
+                  toastrSwalArray(result.msg, function() {
+                      if(result.new_receipt_ref_nos?.length > 0) {
+                        debugger
+
+                        printReceipts(result.new_receipt_ref_nos, paid)
+
+                        setTimeout(function() {
+                          debugger
+                          $('#btn_reEntry').click();
+                        }, 1200);
+                    }
+                  });
+              } else {
+                  
+                  toastrSwal(result.msg, 'error');
+              }
+          }
+      });
+  })
 })
