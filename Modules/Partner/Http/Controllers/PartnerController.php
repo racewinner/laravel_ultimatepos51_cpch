@@ -181,6 +181,7 @@ class PartnerController extends Controller
 
         $print_partner_id = request()->get('print_partner_id');
         $print_partner_leave = request()->get('print_partner_leave');
+        $print_partner_reentry = request()->get('print_partner_reentry');
 
         $partner_debt = $this->ptUtil->getDebt($business_id);
 
@@ -193,7 +194,8 @@ class PartnerController extends Controller
             'sign_policies',
             'payment_partner_id',
             'print_partner_id',
-            'print_partner_leave'
+            'print_partner_leave',
+            'print_partner_reentry'
         ));
     }
 
@@ -737,11 +739,50 @@ class PartnerController extends Controller
             $partner->newly_registered = $partner->created_at == $partner->updated_at ? true : false;
             $partner->debt = $this->ptUtil->getDebt($id);
             $partner->leave = 0;
-
+            $partner->reentry = 0;
+            
             $receipt = [
                 'is_enabled' => false,
                 'print_type' => 'browser',
                 'html_content' => view('partner::partner.show', compact('partner'))->render(),
+                'printer_config' => [],
+                'data' => [],
+            ];
+
+            $output = [
+                'success' => 1,
+                'receipt' => $receipt
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::emergency('File:' . $e->getFile() . 'Line:' . $e->getLine() . 'Message:' . $e->getMessage());
+            $output = [
+                'success' => 0,
+                'msg' => __('messages.something_went_wrong'),
+            ];
+        }
+
+        return $output;
+    }
+
+    public function print_reentry($id)
+    {
+        try {
+            $partner = Partner::find($id);
+            $partner->date_admission = $this->partnerUtil->format_date($partner->date_admission);
+            $partner->date_expire_book = $this->partnerUtil->format_date($partner['date_expire_book']);
+            $partner->dob = $this->partnerUtil->format_date($partner->dob);
+            $partner->entered_at = $this->partnerUtil->format_date($partner->entered_at);
+            $partner->accepted_at = $this->partnerUtil->format_date($partner->accepted_at);
+            $partner->newly_registered = $partner->created_at == $partner->updated_at ? true : false;
+            $partner->debt = $this->ptUtil->getDebt($id);
+            $partner->leave = 0;
+            $partner->reentry = 1;
+            
+            $receipt = [
+                'is_enabled' => false,
+                'print_type' => 'browser',
+                'html_content' => view('partner::partner.show_reentry', compact('partner'))->render(),
                 'printer_config' => [],
                 'data' => [],
             ];
@@ -775,6 +816,7 @@ class PartnerController extends Controller
             $partner->debt = $this->ptUtil->getDebt($id);
             $partner->leave = 1;
             $partner->leave_info = $this->ptUtil->getLeave($id);
+            $partner->reentry = 0;
 
             $receipt = [
                 'is_enabled' => false,

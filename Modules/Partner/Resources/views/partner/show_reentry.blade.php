@@ -6,7 +6,9 @@
                 <h4 class="modal-title text-center">
                     @if($partner->leave == 1)
                       {{ __('partner::lang.partner_leave_print_lavel') }}
-                                        @else
+                    @elseif($partner->reentry == 1)
+                      {{ __('partner::lang.partner_reentry_print_lavel') }}
+                    @else
                       {{ $partner->newly_registered ? __('partner::lang.partner_registration') : __('partner::lang.show_partner') }}
                     @endif
 

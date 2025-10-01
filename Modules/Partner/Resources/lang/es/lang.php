@@ -83,6 +83,7 @@ return [
     'delete_partner' => 'Eliminar Socio',
     'partner_registration' => 'Alta de Socio',
     'partner_leave_print_lavel' => 'Baja de socio',
+    'partner_reentry_print_lavel' => 'Reingreso de socio',
 
     'create' => 'Ingreso',
     'edit' => 'modificar',

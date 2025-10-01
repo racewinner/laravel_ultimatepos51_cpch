@@ -137,6 +137,8 @@
     @if(!empty($print_partner_id))
       @if(!empty($print_partner_leave == 1))
         <a href="#" class="print-invoice print-partner" data-href="/partner/partners/{{ $print_partner_id }}/print_leave" target="_blank"></a>
+      @elseif(!empty($print_partner_reentry == 1))
+        <a href="#" class="print-invoice print-partner" data-href="/partner/partners/{{ $print_partner_id }}/print_reentry" target="_blank"></a>
       @else
         <a href="#" class="print-invoice print-partner" data-href="/partner/partners/{{ $print_partner_id }}/print" target="_blank"></a>
       @endif

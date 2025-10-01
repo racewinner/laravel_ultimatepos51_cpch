@@ -702,7 +702,7 @@ if ($action == 'create') {
                                 afterCreate(result);
                             @elseif($action == 'reEntry')
                                 $(".unsettled-receipts-modal").modal("hide");
-                                window.location.href = `/partner/partners?print_partner_id=${partner_id}`;
+                                window.location.href = `/partner/partners?print_partner_id=${partner_id}&print_partner_reentry=1`;
                             @else
                                 window.location.href = `/partner/partners?print_partner_id=${partner_id}`;
                             @endif

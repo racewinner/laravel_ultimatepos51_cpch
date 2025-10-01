@@ -7,7 +7,7 @@ function showIssueReceiptModal(partner_id) {
         method: 'GET',
         success: function (response) {
             container.html(response);
-
+debugger
             // $('#issue_receipt-modal').off('submit');
             // $('#issue_receipt-modal').on('submit', function(e) {
             //     e.preventDefault();
@@ -279,6 +279,7 @@ debugger
     })
 
     $(document).on('click', '.unsettled-receipts-modal #btn_settle_unpaidReceipts', function (e) {
+      debugger
         e.preventDefault();
         e.stopPropagation();
 
@@ -308,6 +309,45 @@ debugger
                     }
 
                     printReceipts(selected_ids, 1);
+                } else {
+                    toastrSwal(result.msg, 'error');
+                }
+            }
+        })
+    })
+
+    $(document).on('click', '.issue-receipt-modal #btn_settle_unpaidReceipts', function (e) {
+      debugger
+        e.preventDefault();
+        e.stopPropagation();
+
+        const $selected_unpaid_receipts = $("table.unpaid-receipts tbody tr input.sel_unpaid_receipt:checked");
+        if ($selected_unpaid_receipts.length == 0) return;
+
+        const selected_ids = [];
+        for (let i = 0; i < $selected_unpaid_receipts?.length; i++) {
+            selected_ids.push($($selected_unpaid_receipts[i]).data('receipt-id'))
+        }
+
+        const data = {
+            selected_ids,
+        };
+        $.ajax({
+            url: '/partner/receipts/bulk_settle',
+            data,
+            method: 'post',
+            dataType: 'json',
+            success: function (result) {
+              debugger
+                if (result.success == true) {
+                    toastrSwal(result.msg);
+
+                    for(let i=0; i<$selected_unpaid_receipts?.length; i++) {
+                        $tr = $($selected_unpaid_receipts[i]).closest("tr");
+                        $tr.remove();
+                    }
+
+                    printReceipts(result.new_payment_ref_nos, 1);
                 } else {
                     toastrSwal(result.msg, 'error');
                 }

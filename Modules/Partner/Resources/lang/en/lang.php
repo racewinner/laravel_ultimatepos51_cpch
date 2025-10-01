@@ -84,6 +84,8 @@ return [
     'issue_receipt' => 'Issue Receipt',
     'partner_registration' => 'Partner Registration',
     'partner_leave_print_lavel' => 'Partner Cancellation',
+    'partner_reentry_print_lavel' => 'Partner ReEntry',
+
 
     'create' => 'Enter',
     'edit' => 'Modify',
