@@ -379,7 +379,7 @@ class PartnerReceiptController extends Controller
                     if(empty($row['id'])) {     // if total record?
                         return $row['ref_no'];
                     } else {
-                        $html = "<a href='/partner/receipts/" . $row['id'] . "?type=" . ($row['debit'] > 0 ? 'receipt' : 'payment') . "' target='_blank'>";
+                        $html = "<a href='/partner/receipts/xprint/" . $row['id'] . "?type=" . ($row['debit'] > 0 ? 'receipt' : 'payment') . "' target='_blank'>";
                         $html .= $row['ref_no'];
                         $html .= "</a>";
                         return $html;

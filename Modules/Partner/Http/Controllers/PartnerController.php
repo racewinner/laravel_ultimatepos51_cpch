@@ -183,7 +183,8 @@ class PartnerController extends Controller
         $print_partner_leave = request()->get('print_partner_leave');
         $print_partner_reentry = request()->get('print_partner_reentry');
 
-        $partner_debt = $this->ptUtil->getDebt($business_id);
+        // $partner_debt = $this->ptUtil->getDebt($business_id);
+        // $partner_debt2 = $this->ptUtil->getDebt2($print_partner_id);
 
         return view('partner::partner.index', compact(
             'partner_categories',
@@ -195,7 +196,8 @@ class PartnerController extends Controller
             'payment_partner_id',
             'print_partner_id',
             'print_partner_leave',
-            'print_partner_reentry'
+            'print_partner_reentry',
+            // 'partner_debt2'
         ));
     }
 
@@ -738,6 +740,7 @@ class PartnerController extends Controller
             $partner->accepted_at = $this->partnerUtil->format_date($partner->accepted_at);
             $partner->newly_registered = $partner->created_at == $partner->updated_at ? true : false;
             $partner->debt = $this->ptUtil->getDebt($id);
+            $partner->debt2 = $this->ptUtil->getDebt2($id);
             $partner->leave = 0;
             $partner->reentry = 0;
             

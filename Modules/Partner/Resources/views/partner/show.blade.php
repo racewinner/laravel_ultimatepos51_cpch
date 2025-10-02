@@ -124,9 +124,9 @@
                     <div class="form-group">
                         {!! Form::label('first_month_charge', __('partner::lang.first_month_charge') . ':') !!}
                         <div style="display: flex">
-                          <div class="partner-profile" style="flex-grow: 1">{{$partner?->debt['first_month_have_charged_last']}}</div>
+                          <div class="partner-profile" style="flex-grow: 1">{{$partner?->debt2['first_month_have_charged_last']}}</div>
                           <div class="partner-profile" style="flex-grow: 1">
-                              {{ \App\Utils\Util::format_currency($partner && $partner->debt['first_month_have_charged_last'] ? $partner->debt['monthly_fee'] : null, $partner?->debt['currency']) }}
+                              {{ \App\Utils\Util::format_currency($partner && $partner->debt2['first_month_have_charged_last'] ? $partner->debt2['monthly_fee'] : null, $partner?->debt2['currency']) }}
                           </div>
                         </div>
                     </div>
@@ -135,9 +135,9 @@
                     <div class="form-group">
                         {!! Form::label('last_month_charge', __('partner::lang.last_month_charge') . ':') !!}
                         <div style="display: flex">
-                          <div class="partner-profile" style="flex-grow: 1">{{$partner?->debt['last_month_have_to_charge_after']}}</div>
+                          <div class="partner-profile" style="flex-grow: 1">{{$partner?->debt2['last_month_have_to_charge_after']}}</div>
                           <div class="partner-profile" style="flex-grow: 1">
-                              {{ \App\Utils\Util::format_currency($partner?->debt['monthly_fee'], $partner?->debt['currency']) }}
+                              {{ \App\Utils\Util::format_currency($partner?->debt2['monthly_fee'], $partner?->debt2['currency']) }}
                           </div>
                         </div>
                     </div>
