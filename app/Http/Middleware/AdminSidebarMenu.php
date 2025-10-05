@@ -207,46 +207,45 @@ class AdminSidebarMenu
                     }
 
                     //Purchase dropdown
-                    if (in_array('purchases', $enabled_modules) && (auth()->user()->can('purchase.view') || auth()->user()->can('purchase.create') || auth()->user()->can('purchase.update'))) {
+                    // if (in_array('purchases', $enabled_modules) && (auth()->user()->can('purchase.view') || auth()->user()->can('purchase.create') || auth()->user()->can('purchase.update'))) {
                         $menu->dropdown(
                             __('purchase.purchases'),
                             function ($sub) use ($common_settings) {
-                                if (! empty($common_settings['enable_purchase_requisition']) && (auth()->user()->can('purchase_requisition.view_all') || auth()->user()->can('purchase_requisition.view_own'))) {
+                                // if (! empty($common_settings['enable_purchase_requisition']) && (auth()->user()->can('purchase_requisition.view_all') || auth()->user()->can('purchase_requisition.view_own'))) {
                                     $sub->url(
                                         action([\App\Http\Controllers\PurchaseRequisitionController::class, 'index']),
                                         __('lang_v1.purchase_requisition'),
                                         ['icon' => 'fa fas fa-list', 'active' => request()->segment(1) == 'purchase-requisition']
                                     );
-                                }
-
-                                if (! empty($common_settings['enable_purchase_order']) && (auth()->user()->can('purchase_order.view_all') || auth()->user()->can('purchase_order.view_own'))) {
+                                // }
+                                // if (! empty($common_settings['enable_purchase_order']) && (auth()->user()->can('purchase_order.view_all') || auth()->user()->can('purchase_order.view_own'))) {
                                     $sub->url(
                                         action([\App\Http\Controllers\PurchaseOrderController::class, 'index']),
                                         __('lang_v1.purchase_order'),
                                         ['icon' => 'fa fas fa-list', 'active' => request()->segment(1) == 'purchase-order']
                                     );
-                                }
-                                if (auth()->user()->can('purchase.view') || auth()->user()->can('view_own_purchase')) {
+                                // }
+                                // if (auth()->user()->can('purchase.view') || auth()->user()->can('view_own_purchase')) {
                                     $sub->url(
                                         action([\App\Http\Controllers\PurchaseController::class, 'index']),
                                         __('purchase.list_purchase'),
                                         ['icon' => 'fa fas fa-list', 'active' => request()->segment(1) == 'purchases' && request()->segment(2) == null]
                                     );
-                                }
-                                if (auth()->user()->can('purchase.create')) {
+                                // }
+                                // if (auth()->user()->can('purchase.create')) {
                                     $sub->url(
                                         action([\App\Http\Controllers\PurchaseController::class, 'create']),
                                         __('purchase.add_purchase'),
                                         ['icon' => 'fa fas fa-plus-circle', 'active' => request()->segment(1) == 'purchases' && request()->segment(2) == 'create']
                                     );
-                                }
-                                if (auth()->user()->can('purchase.update')) {
+                                // }
+                                // if (auth()->user()->can('purchase.update')) {
                                     $sub->url(
                                         action([\App\Http\Controllers\PurchaseReturnController::class, 'index']),
                                         __('lang_v1.list_purchase_return'),
                                         ['icon' => 'fa fas fa-undo', 'active' => request()->segment(1) == 'purchase-return']
                                     );
-                                }
+                                // }
                                 $sub->url(
                                     '/payments?trans_type=purchase',
                                     __('lang_v1.list_payment'),
@@ -260,7 +259,7 @@ class AdminSidebarMenu
                             },
                             ['icon' => 'fa fas fa-arrow-circle-down', 'id' => 'tour_step6']
                         )->order(25);
-                    }
+                    // }
 
                     //Sell dropdown
                     if ($is_admin || auth()->user()->hasAnyPermission(['sell.view', 'sell.create', 'direct_sell.access', 'view_own_sell_only', 'view_commission_agent_sell', 'access_shipping', 'access_own_shipping', 'access_commission_agent_shipping', 'access_sell_return', 'direct_sell.view', 'direct_sell.update', 'access_own_sell_return'])) {
