@@ -341,9 +341,9 @@ class PartnerReceiptController extends Controller
                     'document' => __('lang_v1.payment'),
                     'credit' => $real_amount,//$r->amount,
                     'debit' => 0,
-                    'ref_no' => $r->payment_ref_no,
-                    'months' => $r->months,
-                    'period' => $r->period,
+                    'ref_no' => $p->payment_ref_no,
+                    'months' => $p->months,
+                    'period' => $p->period,
                     'currency' => $partner->currency ?? session("currency"),
                 ];
             }
