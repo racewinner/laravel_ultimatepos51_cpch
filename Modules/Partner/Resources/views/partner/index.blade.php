@@ -271,8 +271,16 @@ debugger
             })
 
             @if(!empty($print_partner_id))
-            debugger
-            $("a.print-partner").trigger('click');
+                debugger
+                swal({
+                    text: "¿Quieres imprimir el PDF con el perfil del miembro?",
+                    icon: "info",
+                    buttons: [LANG.cancel, LANG.ok],
+                }).then((willPrint) => {
+                    if (willPrint) {
+                      $("a.print-partner").trigger('click');
+                    }
+                });
             @endif
         })
     </script>
