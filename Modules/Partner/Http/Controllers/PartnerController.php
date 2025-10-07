@@ -375,6 +375,7 @@ class PartnerController extends Controller
             $partner->entered_at = $this->partnerUtil->format_date($partner['entered_at']);
             $partner->accepted_at = $this->partnerUtil->format_date($partner['accepted_at']);
             $partner->debt = $this->ptUtil->getDebt($id);
+            $partner->debt2 = $this->ptUtil->getDebt2($id);
 
             return view('partner::partner.show', compact('partner'));
         } catch (\Exception $e) {
