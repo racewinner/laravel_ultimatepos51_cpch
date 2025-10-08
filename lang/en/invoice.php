@@ -75,6 +75,7 @@ return [
   'document_type' => 'Document Type',
   'parent_invoice' => 'Parent Invoice',
   'receipt' => 'Receipt',
+  'receipt_deleted' => 'Cancellation Receipt',
   'e_receipt' => 'e-Receipt',
   'e_invoice_cash' => 'e-Invoice Cash',
   'e_invoice_credit' => 'e-Invoice Credit',

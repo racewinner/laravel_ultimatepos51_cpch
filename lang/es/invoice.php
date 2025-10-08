@@ -61,6 +61,7 @@ return [
   'document_type' => 'Tipo de Documento',
   'parent_invoice' => 'Factura principal',
   'receipt' => 'Recibo',
+  'receipt_deleted' => 'Recibo de cancelación',
   'e_receipt' => 'e-Recibo',
   'e_invoice_cash' => 'e-Factura Contado',
   'e_invoice_credit' => 'e-Factura Crédito',

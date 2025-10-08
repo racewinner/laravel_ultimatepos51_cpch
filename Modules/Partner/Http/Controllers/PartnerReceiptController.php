@@ -696,6 +696,44 @@ class PartnerReceiptController extends Controller
         }
     }
 
+    public function printDeletedReceipt($id)
+    {
+        try {
+            $business_id = request()->session()->get('user.business_id');
+            $business_details = $this->businessUtil->getDetails($business_id);
+            $user = auth()->user();
+            $type = request()->get('type');
+
+            $receipt = PartnerReceipt::with(['currency', 'partner'])->findOrFail($id);
+            $receipt_groups = [
+                $type == 'receipt' ? $receipt->ref_no : $receipt->payment_ref_no => [$receipt]
+            ];
+
+            // logo image
+            $imageUrl = public_path('/images/partner/mark5.png');
+            $imageData = file_get_contents($imageUrl);
+            $base64 = base64_encode($imageData);
+            $base64Logo = 'data:image/jpeg;base64,' . $base64;
+
+            $pdf = PDF::loadView(
+                'partner::partner_receipt.partials.ticket_pdf_deleted',
+                compact('business_details', 'receipt_groups', 'user', 'partner', 'base64Logo', 'type', 'receipt')
+            );
+
+            $pdf->setPaper([0, 0, 265, 1100]);
+            $pdfContent = $pdf->output();
+
+            // Send as a downloadable file response
+            $filename = 'deleted-' . $type . '_(' . $receipt->partner->display_name . ')_(' . $receipt->period . ').pdf';
+            return response($pdfContent, 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+        } catch (\Exception $e) {
+            \Log::emergency('File:' . $e->getFile() . 'Line:' . $e->getLine() . 'Message:' . $e->getMessage());
+            abort(500, __('messages.something_went_wrong'));
+        }
+    }
+
     public function xprint($id)
     {
         try {

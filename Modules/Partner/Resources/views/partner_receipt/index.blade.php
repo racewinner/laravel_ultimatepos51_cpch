@@ -139,6 +139,10 @@
 
         @include('partner::partner.partials.bulk_print')
     </section>
+
+    <section>
+        <a id="print-deleted-receipt" target="_blank" href="/partner/receipts/750/print?type=receipt"><i class="fas fa-eye" aria-hidden="true"></i>XXX</a>
+    </section>
 @endsection
 
 @section('javascript')
@@ -255,6 +259,7 @@
                 
             })
             $(document).on('click', 'a.delete-receipt', function (e) {
+              debugger
                 e.preventDefault();
                 e.stopPropagation();
 
@@ -275,11 +280,19 @@
                             dataType: 'json',
                             success: function (result) {
                                 if (result.success == true) {
-                                    toastrSwal(result.msg);
+                                    toastrSwal(result.msg, 'success', function() {
+                                        debugger
+                                        const el = document.getElementById('print-deleted-receipt');
+                                        if (el) {
+                                          el.href = `/partner/receipts/${receipt_id}/print-deleted-receipt?type=receipt`; // updates the href
+                                          el.click(); // or dispatchEvent for more control
+                                        }
+                                    });
 
                                     if(!receipt_table) initReceiptTable();
                                     receipt_table.ajax.reload();
-                                } else {
+
+                                  } else {
                                     toastrSwal(result.msg, 'error');
                                 }
                             }
