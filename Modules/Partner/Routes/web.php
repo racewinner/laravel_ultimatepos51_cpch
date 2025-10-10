@@ -76,6 +76,8 @@ Route::middleware('web', 'authh', 'auth', 'SetSessionData', 'language', 'timezon
     Route::get('receipts/{id}/prev_unpaid', [PartnerReceiptController::class, 'checkPrevUnpaid']);
     Route::get('receipts/issue', [PartnerReceiptController::class, 'getIssueReceipt']);
     Route::get('receipts/ledger/{partner_id}', [PartnerReceiptController::class, 'getLedger']);
+    Route::get('receipts/whats_id/{partner_id}/{ref_no}', [PartnerReceiptController::class, 'whatsId']);
+
     Route::post('receipts/issue', [PartnerReceiptController::class, 'postIssueReceipt']);
     Route::post('receipts/bulk_settle', [PartnerReceiptController::class, 'bulkSettle']);
     Route::post('receipts/bulk_print', [PartnerReceiptController::class, 'bulkPrint']);

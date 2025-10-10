@@ -144,6 +144,43 @@
       @endif
     @endif
 
+    <!-- Button trigger modal -->
+    <button type="button" id="delete-receipt-by-code" class="btn btn-primary hide" data-toggle="modal" data-target="#deleteReceiptByCodeModal">
+      Launch demo modal
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="deleteReceiptByCodeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          {!! Form::open(['url' => '/xxxxxxxx', 'method' => 'get', 'id' => 'delete_receipt_by_code_form']) !!}
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                  aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">Eliminar recibo por código</h4>
+            </div>
+
+            <div class="modal-body">
+              <div class="form-group">
+                {!! Form::label('name', 'código de recibo' . ':*') !!}
+                {!! Form::text('receipt_code', null, ['class' => 'form-control', 'required', 'placeholder' => 'código de recibo de entrada']) !!}
+                {!! Form::text('row_id', null, ['class' => 'hide']) !!}
+
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">@lang('messages.save')</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">@lang('messages.close')</button>
+            </div>
+          {!! Form::close() !!}
+        </div>
+      </div>
+    </div>
+    <section>
+        <a id="print-deleted-receipt" class="hide" target="_blank" href="/partner/receipts/750/print?type=receipt"><i class="fas fa-eye" aria-hidden="true"></i>XXX</a>
+    </section>
+
 @endsection
 
 @section('javascript')
@@ -222,6 +259,123 @@
                     { data: 'date_expire_book', name: 'date_expire_book' },
                 ],
             });
+
+            // Delegate handler (use on in case table content is replaced)
+            $('#partner_table').on('click', '.del-receipt-by-code', function (e) {
+              debugger
+                var row_id = e.target.dataset.rowId
+                $('input[name="receipt_code"]').val(''); // works for input, select, textarea
+                $('input[name="row_id"]').val(row_id); // works for input, select, textarea
+
+              // // perform login/logout action, then reload data
+              // $.post('/api/row/login', { id: id }, function () {
+              //   table.ajax.reload(null, false); // reload, keep current paging
+              // });
+
+              $('#delete_receipt_by_code_form')
+                .find('button[type="submit"]')
+                .attr('disabled', false);
+
+              $('#delete-receipt-by-code').click();
+            });
+
+            $('#delete_receipt_by_code_form').submit(function (e) {
+              debugger
+                e.preventDefault();
+                var form = $(this);
+                var data = form.serialize();
+
+                $('#deleteReceiptByCodeModal').modal('hide');
+
+                swal({
+                    text: "@lang('messages.confirm_delete')",
+                    icon: "warning",
+                    buttons: {
+                        cancel: "@lang('messages.no')",
+                        confirm: "@lang('messages.yes')"
+                    },
+                    dangerMode: false,
+                }).then((result) => {
+                    if(result) {
+                      let jsonData = {};
+
+                      // Split the string into key-value pairs
+                      data.split('&').forEach(pair => {
+                          let [key, value] = pair.split('=');
+                          jsonData[decodeURIComponent(key)] = decodeURIComponent(value);
+                      });
+
+                      let receiptId = jsonData.receipt_code;
+                      if (!jsonData.receipt_code.includes('/')) {
+                        let dtYear = new Date();
+                        receiptId = dtYear.getFullYear().toString() + '/' + receiptId;
+                      }
+                      if (!jsonData.receipt_code.includes('PRR')) {
+                        receiptId = 'PRR' + receiptId;
+                      }
+                      const w_receiptId = receiptId.replace(/\//g, '-');
+                      $.ajax({
+                        method: 'GET',
+                        url: `/partner/receipts/whats_id/${jsonData.row_id}/${w_receiptId}`,
+                        dataType: 'json',
+                        success: function(result) {
+                          if (result.success) {
+                            let receipt_id = result.receipt_id;
+
+                            $.ajax({
+                                method: 'DELETE',
+                                url: `/partner/receipts/${receipt_id}}`,
+                                dataType: 'json',
+                                success: function (result) {
+                                    if (result.success == true) {
+                                        toastrSwal(result.msg, 'success', function() {
+                                            debugger
+                                            const el = document.getElementById('print-deleted-receipt');
+                                            if (el) {
+                                              el.href = `/partner/receipts/${receipt_id}/print-deleted-receipt?type=receipt`; // updates the href
+                                              el.click(); // or dispatchEvent for more control
+                                            }
+                                        });
+                                        
+                                        if(!partner_table) initReceiptTable();
+                                        partner_table.ajax.reload();
+
+                                      } else {
+                                        toastrSwal(result.msg, 'error');
+                                    }
+                                }
+                            })
+                          } else {
+                            toastrSwal(result.msg, 'error');
+                          }
+                        }
+                      })
+                    }
+                });
+
+                console.log(data)
+
+                // $.ajax({
+                //     method: 'POST',
+                //     url: $(this).attr('action'),
+                //     dataType: 'json',
+                //     data: data,
+                //     beforeSend: function (xhr) {
+                //         __disable_submit_button(form.find('button[type="submit"]'));
+                //     },
+                //     success: function (result) {
+                //         if (result.success == true) {
+                //             $('div.tax_rate_modal').modal('hide');
+                //             toastr.success(result.msg);
+                //             tax_rates_table.ajax.reload();
+                //             tax_groups_table.ajax.reload();
+                //         } else {
+                //             toastr.error(result.msg);
+                //         }
+                //     },
+                // });
+            });
+
 
             $(document).on('shown.bs.modal', '.partner-leave-modal', function (e) {
                 $('.partner-leave-modal .date-picker').datetimepicker({

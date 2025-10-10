@@ -400,6 +400,41 @@ class PartnerReceiptController extends Controller
         }
     }
 
+    public function whatsId($partner_id, $ref_no)
+    {
+      try {
+          $w_ref_no = str_replace('-', '/', $ref_no);
+
+          $query = PartnerReceipt::where('partner_id', $partner_id)
+                                ->where('ref_no', $w_ref_no)->first();
+          if(!empty($query)) {
+              $query = PartnerReceipt::where('partner_id', $partner_id)
+                                ->where('ref_no', $w_ref_no)
+                                ->where('deleted', 0)->first();
+
+              if(!empty($query)) {
+                  return response()->json([
+                      'success' => 1,
+                      'receipt_id' => $query->id
+                  ]);          
+              } else {
+                  return response()->json([
+                      'success' => 0,
+                      'msg' => 'Este recibo ya ha sido eliminado.'
+                  ]);
+              }
+          } else {
+              return response()->json([
+                  'success' => 0,
+                  'msg' => 'No hay recibo.'
+              ]);
+          }
+      } catch (\Exception $e) {
+          \Log::emergency('File:' . $e->getFile() . 'Line:' . $e->getLine() . 'Message:' . $e->getMessage());
+          abort(500, __('messages.something_went_wrong'));
+      }
+    }
+
     public function destroy($id)
     {
         try {

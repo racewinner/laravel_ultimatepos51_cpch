@@ -110,7 +110,9 @@ class PartnerController extends Controller
                             . '<i class="fas fa-file-alt" aria-hidden="true"></i>'
                             . __('partner::lang.issue_receipt') . '</a></li>';
                         $html .= '<li><a href="' . action([PartnerController::class, 'getLeave'], [$row->id]) . '"><i class="fas fa-trash"></i>' . __('messages.delete') . '</a></li>';
-                    } else {
+                        $html .= '<li><a class="del-receipt-by-code" data-row-id="'.$row->id.'"><i class="fas fa-trash"></i>' . 'Eliminar recibo por código' . '</a></li>';
+
+                      } else {
                         $html .= '<li><a href="' . action([PartnerController::class, 'getReEntry'], [$row->id]) . '"><i class="fas fa-undo" aria-hidden="true"></i>' . __('partner::lang.reEntry') . '</a></li>';
                     }
                     $html .= '<li><a href="' . action([PartnerController::class, 'showLedger'], [$row->id]) . '"><i class="fas fa-scroll"></i>' . __('lang_v1.ledger') . '</a></li>';

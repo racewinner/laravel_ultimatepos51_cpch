@@ -141,7 +141,7 @@
     </section>
 
     <section>
-        <a id="print-deleted-receipt" target="_blank" href="/partner/receipts/750/print?type=receipt"><i class="fas fa-eye" aria-hidden="true"></i>XXX</a>
+        <a id="print-deleted-receipt" class="hide" target="_blank" href="/partner/receipts/750/print?type=receipt"><i class="fas fa-eye" aria-hidden="true"></i>XXX</a>
     </section>
 @endsection
 
@@ -272,6 +272,7 @@
                     },
                     dangerMode: false,
                 }).then((result) => {
+                  debugger
                     const receipt_id = $(e.target).closest('a').data('id');
                     if(result) {
                         $.ajax({
